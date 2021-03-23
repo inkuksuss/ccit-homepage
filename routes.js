@@ -1,9 +1,9 @@
 // Global
 const HOME = "/";
 const JOIN = "/join";
-const LOGIN = "/LOGIN";
-const LOGOUT = "/LOGOUT";
-const SEARCH = "SEARCH";
+const LOGIN = "/login";
+const LOGOUT = "/logout";
+const SEARCH = "search";
 
 // Users
 const USERS = "/users";
