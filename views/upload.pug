@@ -1,0 +1,10 @@
+extends layouts/main
+
+block content
+    .form-container
+        form(action=`/boards${routes.upload}`, method="post", enctype="multipart/form-data")
+            label(for="file") Board File
+            input(type="file", id="file", name="boardFile", required=true, accept="video/*, image/*")
+            input(type="text", placeholder="Title", name="title")
+            textarea(name="description", placeholder="Description")
+            input(type="submit", value="Upload Board")

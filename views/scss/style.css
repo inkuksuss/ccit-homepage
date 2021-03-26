@@ -1,0 +1,10 @@
+.boards {
+  display: grid;
+  background-color: red;
+  grid-template-columns: repeat(3, 1fr);
+  height: 100vh;
+}
+
+.boardBlock {
+  background-color: red;
+}
