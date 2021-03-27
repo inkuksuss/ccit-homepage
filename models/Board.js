@@ -17,7 +17,13 @@ const BoardSchema = new mongoose.Schema({
     createdAt: {
         type: Date,
         default: Date.now
-    }
+    },
+    comments: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Comment"
+        }
+    ]
 });
 
 const model = mongoose.model('Board', BoardSchema);

@@ -1,19 +1,28 @@
 import express from 'express';
-import { boardDetail, boards, deleteBoard, editBoard, getUpload, postUpload } from '../controllers/boardController';
+import { boardDetail, boards, deleteBoard, getUpload, getEditBoard, postEditBoard, postUpload } from '../controllers/boardController';
 import { uploadBoard } from '../middleware';
 import routes from '../routes';
 
 
 const boardRouter = express.Router();
 
+// Board
 boardRouter.get(routes.boards, boards);
 
+// Upload
 boardRouter
     .get(routes.upload, getUpload)
     .post(routes.upload, uploadBoard, postUpload);
 
+// Board Detail
 boardRouter.get(routes.boardDetail(), boardDetail);
-boardRouter.get(routes.editBoard, editBoard);
-boardRouter.get(routes.deleteBoard, deleteBoard);
+
+// Edit Board
+boardRouter
+    .get(routes.editBoard(), getEditBoard)
+    .post(routes.editBoard(), postEditBoard);
+
+// Delete Board
+boardRouter.get(routes.deleteBoard(), deleteBoard);
 
 export default boardRouter;

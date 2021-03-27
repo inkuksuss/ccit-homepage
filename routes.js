@@ -58,8 +58,20 @@ const routes = {
           return BOARD_DETAIL;
         }
       },
-    editBoard: EDIT_BOARD,
-    deleteBoard: DELETE_BOARD,
+    editBoard: id => {
+      if(id) {
+        return `/boards/${id}/edit`
+      } else {
+        return EDIT_BOARD;
+      }
+    },
+    deleteBoard: id => {
+      if(id) {
+        return `/boards/${id}/delete`
+      } else {
+        return DELETE_BOARD
+      }
+    },
 
     //Shop
     shop: SHOP,

@@ -1,10 +1,11 @@
 import routes from "../routes";
 import Board from "../models/Board";
 
+
 // Global
 export const home = async(req, res) => {
     try{
-        const boards = await Board.find({});
+        const boards = await Board.find({}).sort({ _id: -1 });
         res.render("home", { pageTitle: "Home", boards })
     } catch(error) {
         console.log(error);
@@ -12,11 +13,19 @@ export const home = async(req, res) => {
     }
 }; 
 
-export const search = (req, res) => {
+export const search = async(req, res) => {
     const { 
         query: { term: searchingBy }
     } = req;
-    res.render("Search", { pageTitle: "Search", searchingBy, boards })
+    let boards = [];
+    try {
+        boards = await Board.find({
+            title: { $regex: searchingBy, $options: "i"}});
+    } catch(err) {
+        console.log(err);
+    }
+    res.render("Search", { pageTitle: `${Board.title}`, searchingBy, boards })
+    
 };
 
 //Board
@@ -40,22 +49,54 @@ export const postUpload = async(req, res) => {
     res.redirect(routes.boardDetail(newBoard.id));
 };
 
-export const editBoard = (req, res) => {
-    res.render("editBoard", { pageTitle: "Edit Board" })};
-
-export const deleteBoard = (req, res) => {
-    res.render("deleteBoard", { pageTitle: "Delete Board" })};
-
 export const boardDetail = async(req, res) => {
     const { 
         params: { id }
     } = req;
     try {
         const board = await Board.findById(id);
-        res.render("boardDetail", { pageTitle: "Board Detail", board })
+        res.render("boardDetail", { pageTitle: board.title, board })
     } catch(error) {
-        alert("존재하지 않는 게시물입니다");
+        // alert("존재하지 않는 게시물입니다");
         res.redirect(routes.home);
     }
 };
+
+export const getEditBoard = async(req, res) => {
+    const {
+        params: { id }
+      } = req;
+    try {
+        const board = await Board.findById(id);
+        res.render("editBoard", { pageTitle: `Edit ${board.title}`, board })
+    } catch(err) {
+        res.redirect(routes.home);
+    }
+};
+
+export const postEditBoard = async(req, res) => {
+    const { 
+        params: { id },
+        body: { title, description }
+    } = req;
+    try {
+        await Board.findOneAndUpdate({ _id: id }, { title, description });
+        res.redirect(routes.boardDetail(id));
+    } catch(err) {
+        res.redirect(routes.home);
+    }
+};
+
+export const deleteBoard = async(req, res) => {
+    const {
+        params: { id }
+     } = req;
+     try {
+         await Board.findOneAndDelete({ _id: id }) 
+     } catch(err) { 
+         console.log(err)
+     }
+     res.redirect(routes.home);
+};
+
     

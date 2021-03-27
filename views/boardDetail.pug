@@ -1,10 +1,15 @@
 extends layouts/main
 
 block content
-    .video__player
+    .board__player
         video(src=`/${board.fileUrl}`, controls="controls")
-    .video__info
-        a(href=routes.editBoard) Edit Board
-        h5.video__title=board.title
-        span.video__views=board.views
-        p.video__description=board.description 
+    .board__info
+        a(href=routes.editBoard(board.id)) Edit Board
+        h5.board__title=board.title
+        span.board__views=board.views
+        p.board__description=board.description
+    .board__comments
+        if board.comments.length === 1
+            span.video__comment-number 1 comment
+        else
+            span.video__comment-number #{board.comments.length} comments 
