@@ -1,6 +1,6 @@
 import express from 'express';
 import { boardDetail, boards, deleteBoard, getUpload, getEditBoard, postEditBoard, postUpload } from '../controllers/boardController';
-import { uploadBoard } from '../middleware';
+import { onlyPrivate, uploadBoard } from '../middleware';
 import routes from '../routes';
 
 
@@ -11,18 +11,18 @@ boardRouter.get(routes.boards, boards);
 
 // Upload
 boardRouter
-    .get(routes.upload, getUpload)
-    .post(routes.upload, uploadBoard, postUpload);
+    .get(routes.upload, onlyPrivate, getUpload)
+    .post(routes.upload, onlyPrivate, uploadBoard, postUpload);
 
 // Board Detail
 boardRouter.get(routes.boardDetail(), boardDetail);
 
 // Edit Board
 boardRouter
-    .get(routes.editBoard(), getEditBoard)
-    .post(routes.editBoard(), postEditBoard);
+    .get(routes.editBoard(), onlyPrivate, getEditBoard)
+    .post(routes.editBoard(), onlyPrivate, postEditBoard);
 
 // Delete Board
-boardRouter.get(routes.deleteBoard(), deleteBoard);
+boardRouter.get(routes.deleteBoard(), onlyPrivate, deleteBoard);
 
 export default boardRouter;

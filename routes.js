@@ -10,6 +10,7 @@ const USERS = "/users";
 const USER_DETAIL = "/:id";
 const EDIT_PROFILE = "/edit-profile";
 const CHANGE_PASSWORD = "/change-password";
+const ME = "/me";
 const WATER = "/:id/water";
 const EAT = "/:id/eat";
 const CART = "/:id/cart";
@@ -24,6 +25,13 @@ const DELETE_BOARD = "/:id/delete";
 // Shop
 const SHOP = "/shop";
 const SHOP_DETAIL = "/shop/:item";
+
+// Social Login
+const GOOGLE = "/auth/google";
+const GOOGLE_CALLBACK = "/auth/google/callback";
+const KAKAO = "/auth/kakao";
+const KAKAO_CALLBACK = "/auth/kakao/callback";
+const KAKAO_LOGOUT = "auth/kakao/logout";
 
 const routes = {
     //Global
@@ -41,9 +49,11 @@ const routes = {
         } else {
           return USER_DETAIL;
         }
-      },
+    },
+
     editProfile: EDIT_PROFILE,
     changePassword: CHANGE_PASSWORD,
+    me: ME,
     water: WATER,
     eat: EAT,
     cart: CART,
@@ -57,7 +67,8 @@ const routes = {
         } else {
           return BOARD_DETAIL;
         }
-      },
+    },
+
     editBoard: id => {
       if(id) {
         return `/boards/${id}/edit`
@@ -65,6 +76,7 @@ const routes = {
         return EDIT_BOARD;
       }
     },
+
     deleteBoard: id => {
       if(id) {
         return `/boards/${id}/delete`
@@ -73,9 +85,16 @@ const routes = {
       }
     },
 
-    //Shop
+    // Shop
     shop: SHOP,
-    shopDetail: SHOP_DETAIL
+    shopDetail: SHOP_DETAIL,
+
+    // Social Login
+    google: GOOGLE,
+    googleCallback: GOOGLE_CALLBACK,
+    kakao: KAKAO,
+    kakaoCallback: KAKAO_CALLBACK,
+    kakaoLogout: KAKAO_LOGOUT
 };
 
 export default routes;

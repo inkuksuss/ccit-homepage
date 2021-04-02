@@ -1,4 +1,19 @@
 extends layouts/main
 
 block content
-    p userDetail
+    .user-profile
+        if !(user.avatar === "basicimg")
+            .user-profile__header    
+                img.u-avatar(src=`${user.avatar}`)
+                h4.profile__username=user.name
+        else
+            .user-profile__header    
+                img.u-avatar(src='../image/basicimg.png')
+                h4.profile__username=user.name
+
+        if !(loggedUser.googleId || loggedUser.kakaoId)
+            .user-profile__btns
+                a(href=`/users${routes.editProfile}`)
+                    button ✏️ Edit Profile
+                a(href=`/users${routes.changePassword}`)
+                    button 🔒 Change Password 

@@ -1,6 +1,6 @@
 mixin boardBlock(board = {})
     .boardBlock
         a(href=routes.boardDetail(board.id))
-            video.boardBlock__thumbnail(src=board.boardFile, controls="controls")
+            video.boardBlock__thumbnail(src=board.boardFile, controls="controls" width="450px" height="300px")
             h4.boardBlock__title=board.title
             h6.boardBlock__views=board.views

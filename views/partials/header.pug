@@ -6,7 +6,7 @@ header.header
             input(type="text", placeholder="Serach by term..." name="term")
     .header__column
         ul  
-            if !user.isAuthenticated
+            if !loggedUser
                 li
                     a(href=routes.join) Join
                 li
@@ -15,6 +15,6 @@ header.header
                 li
                     a(href=`/boards${routes.upload}`) Upload
                 li
-                    a(href=routes.userDetail(user.id)) Profile
+                    a(href=routes.me) Profile
                 li
                     a(href=routes.logout) Log Out
