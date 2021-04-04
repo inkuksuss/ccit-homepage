@@ -105,7 +105,6 @@ export const logout = (req, res) => {
 export const getMe = (req, res) => {
     res.render("userDetail", { pageTitle: "User Detail", user: req.user });
 };
-  
 
 // Users
 export const userDetail = async (req, res) => {
@@ -113,7 +112,8 @@ export const userDetail = async (req, res) => {
       params: { id }
     } = req;
     try {
-      const user = await User.findById(id);
+      const user = await User.findById(id).populate('boards');
+      console.log(user);
       res.render("userDetail", { pageTitle: "User Detail", user });
     } catch (error) {
       res.redirect(routes.home);
@@ -125,29 +125,49 @@ export const getEditProfile = (req, res) => {
 
 export const postEditProfile = async (req, res) => {
     const {
-         user: {
-            avatar,
+         body: {    
             name,
             email
-         }
-    } = req;
-    console.log(req.user._id);
-    console.log(req.user);
+         },
+         file
+    } = req;    /////////////////////////////// req.user로 하면 에러뜸 why?
     try {
-        await User.findByIdAndUpdate(req.user._id, {
+        await User.findByIdAndUpdate({_id: req.user._id}, {$set: {  
             name,
             email,
-            avatar: avatar ? avatar : req.user.avatar
-        })
+            avatar: (file ? file.path : req.user.avatar)
+        }}, {new: true});
         res.redirect(routes.me);
     } catch (err) {
-        res.redirect('editProfile', { pageTitle: "editProfile" });
+        res.redirect(routes.editProfile);
     }
+};
 
-}
-
-export const changePassword = (req,res) => {
+export const getChangePassword = (req,res) => {
      res.render("changePassword", { pageTitle: "Change Paasword" })};
+
+export const postChangePassword =  async (req,res) => {
+    const { body:
+            {
+                oldPassword,
+                newPassword,
+                newPassword1
+            }
+        } = req;
+    try {
+        if(newPassword !== newPassword1) {
+            res.status(400);
+            res.redirect(`/users${routes.changePassword}`);
+            return;
+        }
+        await req.user.changePassword(oldPassword, newPassword1);
+        res.redirect(routes.me);
+    } catch(err) {
+        res.status(400);
+        res.redirect(`/users${routes.changePassword}`);
+    }
+};
+   
 
 export const cart = (req, res) => { 
     res.render("cart", { pageTitle: "Cart" })};

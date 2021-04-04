@@ -1,20 +1,22 @@
 header.header
-    .header__column
-        a(href=routes.home) Home
-    .header__column
-        form(action=routes.search method="GET")
-            input(type="text", placeholder="Serach by term..." name="term")
-    .header__column
-        ul  
-            if !loggedUser
-                li
-                    a(href=routes.join) Join
-                li
-                    a(href=routes.login) Log In
-            else 
-                li
-                    a(href=`/boards${routes.upload}`) Upload
-                li
-                    a(href=routes.me) Profile
-                li
-                    a(href=routes.logout) Log Out
+    .header__wrapper
+        .header__column
+            a(href=routes.home)
+                img(src="/image/basicimg.png")
+        .header__column
+            form(action=routes.search method="GET")
+                input(type="text", placeholder="Serach by term..." name="term")
+        .header__column
+            ul  
+                if !loggedUser
+                    li
+                        a(href=routes.join) Join
+                    li
+                        a(href=routes.login) Log In
+                else 
+                    li
+                        a(href=`/boards${routes.upload}`) Upload
+                    li
+                        a(href=routes.me) Profile
+                    li
+                        a(href=routes.logout) Log Out

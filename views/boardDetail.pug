@@ -1,15 +1,24 @@
 extends layouts/main
+include mixins/videoPlayer
 
 block content
-    .board__player
-        video(src=`/${board.fileUrl}`, controls="controls")
-    .board__info
-        a(href=routes.editBoard(board.id)) Edit Board
-        h5.board__title=board.title
-        span.board__views=board.views
-        p.board__description=board.description
-    .board__comments
-        if board.comments.length === 1
-            span.video__comment-number 1 comment
-        else
-            span.video__comment-number #{board.comments.length} comments 
+    .board-detail__container
+        +videoPlayer({
+            src:board.fileUrl
+        })
+        .board__info
+            if loggedUser && board.creator.id === loggedUser.id
+                    a(href=routes.editBoard(board.id))
+                        button Edit board
+            h5.board__title=board.title
+            p.board__description=board.description
+            if board.views === 1
+                span.board__views 1 view
+            else 
+                span.board__views #{board.views} views
+            .board__author
+                |Uploaded by 
+                a(href=routes.userDetail(board.creator.id))=board.creator.name
+            .board__comments
+                if board.comments.length === 1
+                    span.video__comment-number 1 comment

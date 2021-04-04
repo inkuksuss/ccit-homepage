@@ -1,5 +1,5 @@
 import express from 'express';
-import { changePassword, userDetail, cart, getEditProfile, postEditProfile } from '../controllers/userController';
+import { userDetail, cart, getEditProfile, postEditProfile, getChangePassword, postChangePassword } from '../controllers/userController';
 import { onlyPrivate, uploadAvatar } from '../middleware';
 import routes from '../routes';
 
@@ -9,7 +9,10 @@ userRouter
     .get(routes.editProfile, onlyPrivate, getEditProfile)
     .post(routes.editProfile, onlyPrivate, uploadAvatar, postEditProfile);
 
-userRouter.get(routes.changePassword, onlyPrivate, changePassword);
+userRouter
+    .get(routes.changePassword, onlyPrivate, getChangePassword)  
+    .post(routes.changePassword, onlyPrivate, postChangePassword);
+
 userRouter.get(routes.userDetail(), onlyPrivate, userDetail);
 userRouter.get(routes.cart, cart);
 

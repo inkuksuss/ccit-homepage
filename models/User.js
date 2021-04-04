@@ -6,7 +6,19 @@ const UserSchema = new mongoose.Schema({
     email: String,
     avatar: String,
     kakaoId: Number,
-    googleId: Number
+    googleId: Number,
+    comments: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Comment'
+        }
+    ],
+    boards: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Board'
+        }
+    ]
 }, { 
     versionKey: false
 });

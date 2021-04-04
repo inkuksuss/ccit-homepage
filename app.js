@@ -18,7 +18,9 @@ const app = express();
 
 
 //middlewares
-app.use(helmet()); // 보안
+app.use(helmet({ 
+    contentSecurityPolicy: false 
+})); // 보안
 app.set("view engine", "pug"); //view Engine
 app.use("/uploads", express.static('uploads')); // /uploads로 접근하면 uploads파일로 싸줌
 app.use("/static", express.static('static'));

@@ -44,8 +44,12 @@ export const postUpload = async(req, res) => {
     const newBoard = await Board.create({
         fileUrl: path,
         title,
-        description
+        description,
+        creator: req.user.id
     });
+    console.log(req.user)
+    req.user.boards.push(newBoard.id);
+    req.user.save();
     res.redirect(routes.boardDetail(newBoard.id));
 };
 
@@ -54,7 +58,7 @@ export const boardDetail = async(req, res) => {
         params: { id }
     } = req;
     try {
-        const board = await Board.findById(id);
+        const board = await Board.findById(id).populate("creator");
         res.render("boardDetail", { pageTitle: board.title, board })
     } catch(error) {
         // alert("존재하지 않는 게시물입니다");
@@ -68,7 +72,11 @@ export const getEditBoard = async(req, res) => {
       } = req;
     try {
         const board = await Board.findById(id);
-        res.render("editBoard", { pageTitle: `Edit ${board.title}`, board })
+        if(board.creator.toString() !== req.user.id) {
+            throw Error();
+        } else {
+            res.render('editBoard', { pageTitle: `Edit ${board.title}`, board })
+        }
     } catch(err) {
         res.redirect(routes.home);
     }
@@ -92,7 +100,12 @@ export const deleteBoard = async(req, res) => {
         params: { id }
      } = req;
      try {
-         await Board.findOneAndDelete({ _id: id }) 
+         const board = await Board.findById(id);
+         if(board.creator.toString() !== req.user.id) {
+            throw Error();
+         } else {
+            await Board.findOneAndDelete(id) 
+         }
      } catch(err) { 
          console.log(err)
      }

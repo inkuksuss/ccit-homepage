@@ -12,9 +12,11 @@ module.exports = {
     sourceType: 'module',
   },
   rules: {
+    "camelcase": "off",
     "prettier/prettier": "off",
     "no-console":"off",
     "spaced-comment":"off",
-    "no-else-return":"off"
+    "no-else-return":"off",
+    "no-underscore-dangle": "off"
   },
 };
