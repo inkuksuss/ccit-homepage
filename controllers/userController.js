@@ -102,8 +102,16 @@ export const logout = (req, res) => {
 };
 
 
-export const getMe = (req, res) => {
-    res.render("userDetail", { pageTitle: "User Detail", user: req.user });
+export const getMe =  async (req, res) => {
+    const { 
+        user: { id }
+    } = req;
+    try {
+        const user = await User.findById(id).populate('boards');
+        res.render("userDetail", { pageTitle: "User Detail", user });
+    } catch(err) {
+        res.redirect(routes.home);
+    }
 };
 
 // Users
@@ -113,7 +121,6 @@ export const userDetail = async (req, res) => {
     } = req;
     try {
       const user = await User.findById(id).populate('boards');
-      console.log(user);
       res.render("userDetail", { pageTitle: "User Detail", user });
     } catch (error) {
       res.redirect(routes.home);

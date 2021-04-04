@@ -2,6 +2,9 @@ extends layouts/main
 
 block content
     .form-container
+        .record-container#jsRecordContainer
+            video#jsVideoPreview
+            button#jsRecordBtn 녹화시작
         form(action=`/boards${routes.upload}`, method="post", enctype="multipart/form-data")
             label(for="file") Board File
             input(type="file", id="file", name="boardFile", required=true, accept="video/*, image/*")

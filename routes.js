@@ -33,6 +33,10 @@ const KAKAO = "/auth/kakao";
 const KAKAO_CALLBACK = "/auth/kakao/callback";
 const KAKAO_LOGOUT = "auth/kakao/logout";
 
+const API = "/api";
+const REGISTER_VIEW = "/:id/view";
+const ADD_COMMENT = "/:id/comment";
+
 const routes = {
     //Global
     home: HOME,
@@ -94,7 +98,10 @@ const routes = {
     googleCallback: GOOGLE_CALLBACK,
     kakao: KAKAO,
     kakaoCallback: KAKAO_CALLBACK,
-    kakaoLogout: KAKAO_LOGOUT
+    kakaoLogout: KAKAO_LOGOUT,
+    api: API,
+    registerView: REGISTER_VIEW,
+    addComment: ADD_COMMENT
 };
 
 export default routes;

@@ -1,5 +1,6 @@
 import routes from "../routes";
 import Board from "../models/Board";
+import Comment from "../models/Comment"
 
 
 // Global
@@ -58,7 +59,7 @@ export const boardDetail = async(req, res) => {
         params: { id }
     } = req;
     try {
-        const board = await Board.findById(id).populate("creator");
+        const board = await Board.findById(id).populate("creator").populate("comments");
         res.render("boardDetail", { pageTitle: board.title, board })
     } catch(error) {
         // alert("존재하지 않는 게시물입니다");
@@ -112,4 +113,42 @@ export const deleteBoard = async(req, res) => {
      res.redirect(routes.home);
 };
 
+// Register Board View
+export const postRegiserView = async (req, res) => {
+    const {
+        params: { id }
+    } = req;
+    try {
+        const board = await Board.findById(id);
+        board.views += 1;
+        board.save();
+        res.status(200);
+    } catch(err) {
+        res.status(400);
+    } finally {
+        res.end();
+    }
+};
+
+// Add Comments
+export const postAddComment = async (req, res) => {
+    const {
+        params: { id },
+        body: { comment },
+        user
+    } = req;
+    try {
+        const board = await Board.findById(id);
+        const newComment = await Comment.create({
+            text: comment,
+            creator: user.id
+        });
+        board.comments.push(newComment.id);
+        board.save();
+    } catch (err) {
+        res.status(400);
+    } finally {
+        res.end();
+    }
+};
     
