@@ -118,6 +118,7 @@ export const logout =  async (req, res) => {
                 data: {kakaoId}
             })
             try {
+                req.logout();
                 req.session.destroy();
                 res.redirect(routes.login);
                 console.log('hello');
