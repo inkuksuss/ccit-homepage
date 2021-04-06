@@ -1,4 +1,5 @@
 import passport from "passport";
+import axios from 'axios';
 import routes from "../routes";
 import User from "../models/User";
 
@@ -95,12 +96,42 @@ export const kakaoLoginCallback =  async (accessToken, refreshToken, profile, do
     }
 };
 
-export const logout = (req, res) => {
-    req.logout();
-    req.session.destroy();
-    res.redirect(routes.home);
+export const logout =  async (req, res) => {
+    // if(req.user.kakaoId) {
+    //     // console.log(req.user);
+    //     const { user: { kakaoId }} = req;
+    //     await axios.post('http://localhost:4000/v1/user/unlink', {
+    //         header: {
+    //             'Authorization': `KakaoAk ${process.env.KAKAO_CLIENT_ADMIN}`
+    //         }},{
+    //         data: {
+    //             // target_id_type: ,
+    //             target_id: kakaoId
+    //         }}
+        // )
+        if(req.user.kakaoId) {
+            const { user: { kakaoId }} = req;
+            const url = `http://localhost:4000/logout?client_id=${process.env.KAKAO_CLIENT_ID}&logout_redirect_uri=http://localhost:4000/${routes.kakaoLogout}`
+            await axios({
+                method: 'get',
+                url,
+                data: {kakaoId}
+            })
+            try {
+                req.session.destroy();
+                res.redirect(routes.login);
+                console.log('hello');
+            } catch(err) {
+                console.log(err);
+                res.redirect(routes.home);
+            }
+        }
+         else {
+        req.logout();
+        req.session.destroy();
+        res.redirect(routes.home);
+        }
 };
-
 
 export const getMe =  async (req, res) => {
     const { 

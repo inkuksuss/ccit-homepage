@@ -34,9 +34,13 @@ globalRouter.get(routes.kakaoCallback,
     }
 ));
 
+globalRouter
+    .get(routes.logout, onlyPrivate, logout)
+    // .post(routes.logout)
+
+
 globalRouter.get(routes.me, getMe);
 globalRouter.get(routes.home, home);
-globalRouter.get(routes.logout, onlyPrivate, logout);
 globalRouter.get(routes.search, search);
 
 export default globalRouter;
