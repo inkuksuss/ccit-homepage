@@ -32,22 +32,29 @@ app.use(bodyPareser.urlencoded({ extended: true })); // FORM형식 가져옴
 app.use(morgan("dev")); // 접속 추적
 app.use(session({
     secret: process.env.COOKIE_SECRET,
-    resave: true,
+    resave: false,
     saveUninitialized: false,
-    store: Mongostore.create({ mongoUrl: process.env.MONGO_URL})
+    // cookie : { // 쿠키에 들어가는 세션 ID값의 옵션
+    //     maxAge : 1000 * 60 * 10 // 10분후 폭파
+    // },
+    store: Mongostore.create({ mongoUrl: process.env.MONGO_URL, autoRemove: 'native', ttl: 60 * 60}),
 }));
 app.use(passport.initialize());
 app.use(passport.session());
 
+// app.use(cors({
+//     origin: true,
+//     credentials: true
+//   }));
 
 app.use(localsMiddleware);
 
 //Router
+app.use(routes.api, apiRouter);
 app.use(routes.home, globalRouter);
 app.use(routes.users, userRouter);
 app.use(routes.boards, boardRouter);
 app.use(routes.shop, shopRouter);
-app.use(routes.api, apiRouter);
 
 
 export default app;

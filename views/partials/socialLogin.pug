@@ -1,9 +1,13 @@
 .social-login
-    button.social-login--github
+    button.social-login--google
         a(href=`${routes.google}`)
             span 
-            |Continue with Google
-    button.social-login--facebook
-        a(href=`${routes.kakao}`)
-            span 
-            |Continue with Kakao 
+            | Google
+    button.social-login--kakao(onClick="kakaoLogin()") kakaoLogin
+    button.social-logout--kakao(onClick="kakaoLogout()") kakaoLogout
+    input#userinfo(value='')
+
+
+    
+
+

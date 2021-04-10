@@ -5,7 +5,7 @@ header.header
                 img(src="/image/basicimg.png")
         .header__column
             form(action=routes.search method="GET")
-                input(type="text", placeholder="Serach by term..." name="term")
+                input(type="text", placeholder="검색어를 입력해주세요.." name="term")
         .header__column
             ul  
                 if !loggedUser

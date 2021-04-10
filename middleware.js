@@ -7,13 +7,14 @@ const multerAvatar = multer({ dest: "uploads/boards/"});
 export const localsMiddleware = (req, res , next) => {
     res.locals.siteName = "CCIT";
     res.locals.routes = routes;
-    res.setHeader("Content-Security-Policy", "script-src 'self' https://archive.org");
-    res.locals.loggedUser = req.user || null;
+    // res.setHeader("Content-Security-Policy", "script-src 'self' https://archive.org");
+    res.locals.loggedUser = req.body.user || req.user || null;
+    // console.log(res.locals.loggedUser);
     next();
 };
 
 export const onlyPublic = (req, res, next) => {
-  if(req.user) {
+  if(req.user || req.body.user) {
     console.log(req.user);
     res.redirect(routes.home);
   } else {

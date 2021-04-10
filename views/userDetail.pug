@@ -12,7 +12,7 @@ block content
                 img.u-avatar(src='../image/basicimg.png')
                 h4.profile__username=user.name
 
-        if !(loggedUser.googleId || loggedUser.kakaoId)
+        if !(loggedUser.provider === 'kakao')
             .user-profile__btns
                 a(href=`/users${routes.editProfile}`)
                     button ✏️ Edit Profile

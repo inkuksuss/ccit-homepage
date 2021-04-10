@@ -1,7 +1,7 @@
 import passport from "passport";
-import axios from 'axios';
 import routes from "../routes";
 import User from "../models/User";
+// import Session from "../models/"
 
 // Global
 export const getJoin = (req, res) => {
@@ -9,26 +9,27 @@ export const getJoin = (req, res) => {
 };
   
 export const postJoin = async (req, res, next) => {
-const {
-    body: { name, email, password, password2 }
-} = req;
-if (password !== password2) {
-    res.status(400);
-    res.render("join", { pageTitle: "Join" });
-} else {
-    try {
-        const user = await User({
-            name,
-            email,
-            avatar: "basicimg"
-        });
-        await User.register(user, password);
-        next();
-    } catch(err) {
-        console.log(err);
-        res.redirect(routes.home);
+    const {
+        body: { name, email, password, password2 }
+    } = req;
+    if (password !== password2) {
+        res.status(400);
+        res.render("join", { pageTitle: "Join" });
+    } else {
+        try {
+            const user = await User({
+                name,
+                email,
+                avatar: "basicimg"
+            });
+            await User.register(user, password);
+            next();
+        } catch(err) {
+            console.log(err);
+            res.redirect(routes.home);
+        }
     }
-}};
+};
 
 export const getLogin = (req, res) =>
   res.render("login", { pageTitle: "Log In" });
@@ -65,73 +66,52 @@ export const googleLoginCallback = async (request, accessToken, refreshToken, pr
     }
 };
 
-export const kakaoLogin = passport.authenticate('kakao');
-
-export const kakaoLoginCallback =  async (accessToken, refreshToken, profile, done) => {
+export const postKakaoLogin = async (req, res) => {
     const {
-        _json: { 
-            id, 
-            kakao_account: { email, profile: { profile_image_url } },
-            properties: { nickname },
-        } 
-    } = profile;
+         params : { id },
+         body: { user: { profile, host }},
+    } = req; // token = req.body.token
     try {
-        const user = await User.findOne({ email })
+        const user = await User.findOne({ 
+            email: id 
+        })
         if(user) {
-            user.kakaoId = id;
+            user.provider = host;
             user.save();
-            return done(null, user);
+            req.session.passport = { 
+                user: id,
+                token: req.body.token 
+            }
+            req.session.save();
+            res.status(200);
         } else {
             const newUser = await User.create({
-                email,
-                avatar: profile_image_url,
-                name: nickname,
-                kakaoId: id,
-            });
+                name: profile.nickname,
+                email: id,
+                avatar: profile.profile_image_url,
+                provider: host
+            })
             newUser.save();
-            return done(null, newUser);
-        }
-    } catch (err) {
-        return done(err);
+            req.session.passport = { 
+                user: id,
+                token: req.body.token 
+            }
+            res.status(200);
+        }    
+    } catch(err) {
+        res.status(400);
+        console.log(err);
+    } finally {
+        res.end();
     }
 };
 
-export const logout =  async (req, res) => {
-    // if(req.user.kakaoId) {
-    //     // console.log(req.user);
-    //     const { user: { kakaoId }} = req;
-    //     await axios.post('http://localhost:4000/v1/user/unlink', {
-    //         header: {
-    //             'Authorization': `KakaoAk ${process.env.KAKAO_CLIENT_ADMIN}`
-    //         }},{
-    //         data: {
-    //             // target_id_type: ,
-    //             target_id: kakaoId
-    //         }}
-        // )
-        if(req.user.kakaoId) {
-            const { user: { kakaoId }} = req;
-            const url = `http://localhost:4000/logout?client_id=${process.env.KAKAO_CLIENT_ID}&logout_redirect_uri=http://localhost:4000/${routes.kakaoLogout}`
-            await axios({
-                method: 'get',
-                url,
-                data: {kakaoId}
-            })
-            try {
-                req.logout();
-                req.session.destroy();
-                res.redirect(routes.login);
-                console.log('hello');
-            } catch(err) {
-                console.log(err);
-                res.redirect(routes.home);
-            }
-        }
-         else {
-        req.logout();
-        req.session.destroy();
-        res.redirect(routes.home);
-        }
+export const logout = (req, res) => {
+    req.logout();
+    req.session.destroy(() => {
+        res.clearCookie('connect.sid');
+        res.redirect(routes.login);
+    }); 
 };
 
 export const getMe =  async (req, res) => {
@@ -210,3 +190,34 @@ export const postChangePassword =  async (req,res) => {
 
 export const cart = (req, res) => { 
     res.render("cart", { pageTitle: "Cart" })};
+
+export const kakaoLogin = passport.authenticate('kakao');
+
+export const kakaoLoginCallback =  async (accessToken, refreshToken, profile, done) => {
+    const {
+        _json: { 
+            id, 
+            kakao_account: { email, profile: { profile_image_url } },
+            properties: { nickname },
+        } 
+    } = profile;
+    try {
+        const user = await User.findOne({ email })
+        if(user) {
+            user.kakaoId = id;
+            user.save();
+            return done(null, user);
+        } else {
+            const newUser = await User.create({
+                email,
+                avatar: profile_image_url,
+                name: nickname,
+                kakaoId: id,
+            });
+            newUser.save();
+            return done(null, newUser);
+        }
+    } catch (err) {
+        return done(err);
+    }
+};

@@ -1,5 +1,6 @@
 import routes from "../routes";
 import Board from "../models/Board";
+import User from "../models/User"
 import Comment from "../models/Comment"
 
 
@@ -12,7 +13,21 @@ export const home = async(req, res) => {
         console.log(error);
         res.render("home", { pageTitle: "Home", boards: [] });
     }
-}; 
+};
+
+export const postHome = async (req, res) => {
+    const { body: { user }} = req;
+    const jsonUser = JSON.parse(user)
+    try {
+        const loggedUser = await User.findOne({ email: jsonUser.email });
+        const boards = await Board.find({}).sort({ _id: -1 });
+        console.log(loggedUser);
+        res.render('home', { loggedUser, boards });
+    } catch (err) {
+        console.log(err);
+        res.redirect(routes.login);
+    }
+};
 
 export const search = async(req, res) => {
     const { 

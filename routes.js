@@ -36,6 +36,7 @@ const KAKAO_LOGOUT = "auth/kakao/logout";
 const API = "/api";
 const REGISTER_VIEW = "/:id/view";
 const ADD_COMMENT = "/:id/comment";
+const KAKAO_LOGIN = "/:id/kakao";
 
 const routes = {
     //Global
@@ -101,7 +102,8 @@ const routes = {
     kakaoLogout: KAKAO_LOGOUT,
     api: API,
     registerView: REGISTER_VIEW,
-    addComment: ADD_COMMENT
+    addComment: ADD_COMMENT,
+    kakaoLogin: KAKAO_LOGIN
 };
 
 export default routes;
