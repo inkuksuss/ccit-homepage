@@ -9,8 +9,8 @@ html
     body
         script(type="text/javascript")
         script(src="https://developers.kakao.com/sdk/js/kakao.js")
-        script(src="/static/main.js")
         include ../partials/header
         main
             block content
         include ../partials/footer
+        script(src="/static/main.js") // 여기 없으면 안돼용~

@@ -17,11 +17,10 @@ export const home = async(req, res) => {
 
 export const postHome = async (req, res) => {
     const { body: { user }} = req;
-    const jsonUser = JSON.parse(user)
+    const jsonUser = JSON.parse(user);
     try {
         const loggedUser = await User.findOne({ email: jsonUser.email });
         const boards = await Board.find({}).sort({ _id: -1 });
-        console.log(loggedUser);
         res.render('home', { loggedUser, boards });
     } catch (err) {
         console.log(err);

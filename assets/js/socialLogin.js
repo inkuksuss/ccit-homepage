@@ -1,5 +1,5 @@
 import axios from 'axios';
-// axios.defaults.withCredentials = true
+
 
 // Kakao
 const javascriptKey = "b46510cb58e54a3169d015fb9e716618";
