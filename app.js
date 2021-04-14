@@ -9,7 +9,6 @@ import Mongostore from "connect-mongo";
 import globalRouter from "./routers/globalRouter";
 import userRouter from "./routers/userRouter";
 import boardRouter from "./routers/boardRouter";
-import shopRouter from "./routers/shopRouter";
 import apiRouter from "./routers/apiRouter";
 import routes from "./routes";
 import { localsMiddleware } from './middleware';
@@ -37,7 +36,7 @@ app.use(session({
     // cookie : { // 쿠키에 들어가는 세션 ID값의 옵션
     //     maxAge : 1000 * 60 * 10 // 10분후 폭파
     // },
-    store: Mongostore.create({ mongoUrl: process.env.MONGO_URL, autoRemove: 'native', ttl: 60 * 60}),
+    store: Mongostore.create({ mongoUrl: process.env.MONGO_URL, autoRemove: 'native', ttl: 60 * 6}),
 }));
 app.use(passport.initialize());
 app.use(passport.session());
@@ -54,7 +53,6 @@ app.use(routes.api, apiRouter);
 app.use(routes.home, globalRouter);
 app.use(routes.users, userRouter);
 app.use(routes.boards, boardRouter);
-app.use(routes.shop, shopRouter);
 
 
 export default app;

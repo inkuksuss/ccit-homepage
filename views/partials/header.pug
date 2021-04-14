@@ -13,6 +13,14 @@ header.header
                         a(href=routes.join) Join
                     li
                         a(href=routes.login) Log In
+
+                else if (loggedUser.provider === "kakao")
+                    li
+                        a(href=`/boards${routes.upload}`) Upload
+                    li
+                        a(href=routes.me) Profile
+                    li
+                        a.social-logout--kakao(href="javascript:void(0);" onClick="kakaoLogout();return false;") kkLogout
                 else 
                     li
                         a(href=`/boards${routes.upload}`) Upload

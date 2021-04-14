@@ -1,7 +1,7 @@
 import express from "express";
 import passport from 'passport';
 import { home, postHome, search } from '../controllers/boardController';
-import { getJoin, postJoin, logout, getLogin, postLogin, googleLogin, getMe, kakaoLogin } from '../controllers/userController';
+import { getJoin, postJoin, logout, getLogin, postLogin, googleLogin, getMe } from '../controllers/userController';
 import { onlyPrivate, onlyPublic } from '../middleware';
 import routes from "../routes";
 
@@ -26,15 +26,6 @@ globalRouter.get(routes.googleCallback,
     }
 ));
         
-globalRouter.get(routes.kakao, kakaoLogin);
-
-globalRouter.get(routes.kakaoCallback,
-    passport.authenticate('kakao', {
-        failureRedirect: `${routes.login}`,
-        successRedirect: `${routes.home}`
-    }
-));
-
 globalRouter
     .get(routes.logout, onlyPrivate, logout)
     // .post(routes.logout)

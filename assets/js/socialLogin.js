@@ -4,7 +4,7 @@ import axios from 'axios';
 // Kakao
 const javascriptKey = "b46510cb58e54a3169d015fb9e716618";
 
-function dataTransform(user) {
+function dataLoginTransform(user) {
     const form = document.createElement("form");
     form.action = "http://localhost:4000";
     form.method = "POST";
@@ -37,6 +37,7 @@ console.log(Kakao.isInitialized());
 
 window.kakaoLogin = function () {
     const token = window.Kakao.Auth.getAccessToken()
+    console.log(token);
     window.Kakao.Auth.login({
         throughTalk: false,
         success: function (res) {
@@ -50,7 +51,8 @@ window.kakaoLogin = function () {
                     sendUser(user, user.email, token);
                     alert('로그인 성공');
                     // window.location.replace("http://localhost:4000");
-                    dataTransform(user);
+                    dataLoginTransform(user);
+                    // window.localStorage.setItem("AcessToken", token);
                 },
                 fail: function (err) {
                     console.log(err)
@@ -65,20 +67,21 @@ window.kakaoLogin = function () {
     });
 };
 
-window.kakaoLogout = function () {
-    if (Kakao.Auth.getAccessToken()) {
+window.kakaoLogout = function (response) {
+    if (window.Kakao.Auth.getAccessToken()) {
         window.Kakao.API.request({
             url: '/v1/user/unlink',
             success: function (response) {
-                alert('로그아웃');    
+                alert('로그아웃');
+                console.log(response);
+                window.location.replace("http://localhost:4000/logout");
             },
             fail: function (error) {
                 console.log(error)
             },
         })
         window.Kakao.Auth.setAccessToken(undefined);
-        const userinfoElem = document.querySelector('#userinfo') 
-        if(userinfoElem) userinfoElem.value = ''
+        window.localStorage.clear();
     }
 };
 

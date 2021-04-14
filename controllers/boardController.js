@@ -16,7 +16,9 @@ export const home = async(req, res) => {
 };
 
 export const postHome = async (req, res) => {
-    const { body: { user }} = req;
+    const { 
+        body: { user }
+    } = req;
     const jsonUser = JSON.parse(user);
     try {
         const loggedUser = await User.findOne({ email: jsonUser.email });
@@ -62,7 +64,6 @@ export const postUpload = async(req, res) => {
         description,
         creator: req.user.id
     });
-    console.log(req.user)
     req.user.boards.push(newBoard.id);
     req.user.save();
     res.redirect(routes.boardDetail(newBoard.id));

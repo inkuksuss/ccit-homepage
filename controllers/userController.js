@@ -12,7 +12,11 @@ export const postJoin = async (req, res, next) => {
     const {
         body: { name, email, password, password2 }
     } = req;
+    const checkEmail = await User.findOne({email})
     if (password !== password2) {
+        res.status(400);
+        res.render("join", { pageTitle: "Join" });
+    } else if(checkEmail){
         res.status(400);
         res.render("join", { pageTitle: "Join" });
     } else {
@@ -39,23 +43,23 @@ export const postLogin = passport.authenticate("local", {
     successRedirect: routes.home
 });
 
-export const googleLogin = passport.authenticate('google',{ scope: [ 'email', 'profile' ] });
+export const googleLogin = passport.authenticate('google',{ scope: [ 'email', 'profile' ], prompt: 'select_account' });
 
 export const googleLoginCallback = async (request, accessToken, refreshToken, profile, done) => {
     const { 
-        _json: { sub, name, email, picture }
+        _json: { name, email, picture }
     } = profile;
     try {
         const user = await User.findOne({ email })
         if(user) {
-            user.googleId = sub;
+            user.provider = "google";
             user.save();
             return done(null, user);
         } else {
            const newUser = await User.create({
                email,
                name,
-               googleId: sub,
+               provider: "google",
                avatar: picture
            });
            newUser.save();
@@ -187,10 +191,6 @@ export const postChangePassword =  async (req,res) => {
     }
 };
    
-
-export const cart = (req, res) => { 
-    res.render("cart", { pageTitle: "Cart" })};
-
 export const kakaoLogin = passport.authenticate('kakao');
 
 export const kakaoLoginCallback =  async (accessToken, refreshToken, profile, done) => {

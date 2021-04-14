@@ -13,7 +13,7 @@ const CHANGE_PASSWORD = "/change-password";
 const ME = "/me";
 const WATER = "/:id/water";
 const EAT = "/:id/eat";
-const CART = "/:id/cart";
+const CAM = "/:id/cam";
 
 // Boards
 const BOARDS = "/boards";
@@ -21,10 +21,6 @@ const UPLOAD = "/upload";
 const BOARD_DETAIL = "/:id";
 const EDIT_BOARD = "/:id/edit";
 const DELETE_BOARD = "/:id/delete";
-
-// Shop
-const SHOP = "/shop";
-const SHOP_DETAIL = "/shop/:item";
 
 // Social Login
 const GOOGLE = "/auth/google";
@@ -37,6 +33,8 @@ const API = "/api";
 const REGISTER_VIEW = "/:id/view";
 const ADD_COMMENT = "/:id/comment";
 const KAKAO_LOGIN = "/:id/kakao";
+const GOOGLE_MAP = "/:id/google-map";
+const HOSPITAL = "/:id/hospital"
 
 const routes = {
     //Global
@@ -61,7 +59,7 @@ const routes = {
     me: ME,
     water: WATER,
     eat: EAT,
-    cart: CART,
+    cam: CAM,
 
     //Boards
     boards: BOARDS,
@@ -90,20 +88,19 @@ const routes = {
       }
     },
 
-    // Shop
-    shop: SHOP,
-    shopDetail: SHOP_DETAIL,
-
     // Social Login
     google: GOOGLE,
     googleCallback: GOOGLE_CALLBACK,
     kakao: KAKAO,
     kakaoCallback: KAKAO_CALLBACK,
     kakaoLogout: KAKAO_LOGOUT,
+    // API
     api: API,
     registerView: REGISTER_VIEW,
     addComment: ADD_COMMENT,
-    kakaoLogin: KAKAO_LOGIN
+    kakaoLogin: KAKAO_LOGIN,
+    googleMap: GOOGLE_MAP,
+    hospital: HOSPITAL
 };
 
 export default routes;
