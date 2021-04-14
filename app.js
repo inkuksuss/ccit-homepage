@@ -33,10 +33,10 @@ app.use(session({
     secret: process.env.COOKIE_SECRET,
     resave: false,
     saveUninitialized: false,
-    // cookie : { // 쿠키에 들어가는 세션 ID값의 옵션
-    //     maxAge : 1000 * 60 * 10 // 10분후 폭파
-    // },
-    store: Mongostore.create({ mongoUrl: process.env.MONGO_URL, autoRemove: 'native', ttl: 60 * 6}),
+    cookie : { // 쿠키에 들어가는 세션 ID값의 옵션
+        maxAge : 3 * 60 * 60 
+    },
+    store: Mongostore.create({ mongoUrl: process.env.MONGO_URL, autoRemove: 'native'}),
 }));
 app.use(passport.initialize());
 app.use(passport.session());
