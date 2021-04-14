@@ -50,9 +50,7 @@ window.kakaoLogin = function () {
                     user.host = 'kakao';
                     sendUser(user, user.email, token);
                     alert('로그인 성공');
-                    // window.location.replace("http://localhost:4000");
                     dataLoginTransform(user);
-                    // window.localStorage.setItem("AcessToken", token);
                 },
                 fail: function (err) {
                     console.log(err)
@@ -67,13 +65,12 @@ window.kakaoLogin = function () {
     });
 };
 
-window.kakaoLogout = function (response) {
+window.kakaoLogout = function (res) {
     if (window.Kakao.Auth.getAccessToken()) {
         window.Kakao.API.request({
             url: '/v1/user/unlink',
-            success: function (response) {
+            success: function (res) {
                 alert('로그아웃');
-                console.log(response);
                 window.location.replace("http://localhost:4000/logout");
             },
             fail: function (error) {
