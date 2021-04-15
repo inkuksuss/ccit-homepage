@@ -33,26 +33,21 @@ app.use(session({
     secret: process.env.COOKIE_SECRET,
     resave: false,
     saveUninitialized: false,
-    cookie : { // 쿠키에 들어가는 세션 ID값의 옵션
-        maxAge : 3 * 60 * 60 
-    },
-    store: Mongostore.create({ mongoUrl: process.env.MONGO_URL, autoRemove: 'native'}),
+    // cookie : { // 쿠키에 들어가는 세션 ID값의 옵션
+    //     maxAge : 3 * 60 * 60 
+    // },
+    store: Mongostore.create({ mongoUrl: process.env.MONGO_URL, autoRemove: 'native', ttl: 60 * 60}),
 }));
 app.use(passport.initialize());
 app.use(passport.session());
 
-// app.use(cors({
-//     origin: true,
-//     credentials: true
-//   }));
-
 app.use(localsMiddleware);
 
 //Router
-app.use(routes.api, apiRouter);
 app.use(routes.home, globalRouter);
 app.use(routes.users, userRouter);
 app.use(routes.boards, boardRouter);
+app.use(routes.api, apiRouter);
 
 
 export default app;

@@ -52,21 +52,26 @@ export const boards = (req, res) => {
 export const getUpload = (req, res) => { 
     res.render("Upload", { pageTitle: "Upload" })};
 
-export const postUpload = async(req, res) => {
+export const postUpload = async (req, res) => {
     const {
         body: { title, description },
         file: { path }
     } = req;
     // To Do: Upload and save video
-    const newBoard = await Board.create({
-        fileUrl: path,
-        title,
-        description,
-        creator: req.user.id
-    });
-    req.user.boards.push(newBoard.id);
-    req.user.save();
-    res.redirect(routes.boardDetail(newBoard.id));
+    try{
+        const newBoard = await Board.create({
+            fileUrl: path,
+            title,
+            description,
+            creator: req.user.id
+        });
+        req.user.boards.push(newBoard.id);
+        req.user.save();
+        res.redirect(routes.boardDetail(newBoard.id));
+    } catch(err) {
+        res.redirect(routes.getUpload);
+        console.log(err);
+    }
 };
 
 export const boardDetail = async(req, res) => {
@@ -154,12 +159,15 @@ export const postAddComment = async (req, res) => {
     } = req;
     try {
         const board = await Board.findById(id);
+        const userComment = await User.findById(user.id);
         const newComment = await Comment.create({
             text: comment,
             creator: user.id
         });
+        userComment.comments.push(newComment);
         board.comments.push(newComment.id);
         board.save();
+        userComment.save();
     } catch (err) {
         res.status(400);
     } finally {

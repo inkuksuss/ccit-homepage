@@ -25,10 +25,8 @@ const DELETE_BOARD = "/:id/delete";
 // Social Login
 const GOOGLE = "/auth/google";
 const GOOGLE_CALLBACK = "/auth/google/callback";
-const KAKAO = "/auth/kakao";
-const KAKAO_CALLBACK = "/auth/kakao/callback";
-const KAKAO_LOGOUT = "auth/kakao/logout";
 
+// API
 const API = "/api";
 const REGISTER_VIEW = "/:id/view";
 const ADD_COMMENT = "/:id/comment";
@@ -91,9 +89,7 @@ const routes = {
     // Social Login
     google: GOOGLE,
     googleCallback: GOOGLE_CALLBACK,
-    kakao: KAKAO,
-    kakaoCallback: KAKAO_CALLBACK,
-    kakaoLogout: KAKAO_LOGOUT,
+
     // API
     api: API,
     registerView: REGISTER_VIEW,

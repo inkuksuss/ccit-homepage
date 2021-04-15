@@ -11,7 +11,11 @@ const increaseNumber = () => {
 const addComment = comment => {
     const li = document.createElement("li");
     const span = document.createElement("span");
+    // const updateIcon = document.createElement("span");
+    // const deleteIcon = document.createElement("span");
     span.innerHTML = comment;
+    // updateIcon.innerHTML = '<i class="fas fa-pen"></i>';
+    // deleteIcon.innerHTML = '<i class="far fa-times-circle"></i>';
     li.appendChild(span);
     commentList.prepend(li);
     increaseNumber();

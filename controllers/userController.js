@@ -111,8 +111,8 @@ export const postKakaoLogin = async (req, res) => {
 };
 
 export const logout = (req, res) => {
-    req.logout();
     req.session.destroy(() => {
+        req.logout();
         res.clearCookie('connect.sid');
         res.redirect(routes.login);
     }); 
@@ -191,33 +191,3 @@ export const postChangePassword =  async (req,res) => {
     }
 };
    
-export const kakaoLogin = passport.authenticate('kakao');
-
-export const kakaoLoginCallback =  async (accessToken, refreshToken, profile, done) => {
-    const {
-        _json: { 
-            id, 
-            kakao_account: { email, profile: { profile_image_url } },
-            properties: { nickname },
-        } 
-    } = profile;
-    try {
-        const user = await User.findOne({ email })
-        if(user) {
-            user.kakaoId = id;
-            user.save();
-            return done(null, user);
-        } else {
-            const newUser = await User.create({
-                email,
-                avatar: profile_image_url,
-                name: nickname,
-                kakaoId: id,
-            });
-            newUser.save();
-            return done(null, newUser);
-        }
-    } catch (err) {
-        return done(err);
-    }
-};
