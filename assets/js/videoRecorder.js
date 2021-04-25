@@ -4,10 +4,6 @@ const videoPreview = document.getElementById('jsVideoPreview');
 
 let streamObject;
 let videoRecorder;
-let startTime;
-let finishTime;
-
-
 
 function stopStreameVideo(videoElem) {
     const stream = videoElem.srcObject;
@@ -28,8 +24,6 @@ const handleVideoData = event => {
 };
 
 const stopRecording = () => {
-    finishTime = Date.now();
-    console.log(finishTime);
     videoRecorder.stop();
     recordBtn.removeEventListener("click", stopRecording);
     recordBtn.addEventListener("click", getVideo);
@@ -38,8 +32,6 @@ const stopRecording = () => {
 };
 
 const startRecording = () => {
-    startTime = Date.now()
-    console.log(startTime);
     videoRecorder = new MediaRecorder(streamObject);
     videoRecorder.start();
     videoRecorder.addEventListener("dataavailable", handleVideoData);

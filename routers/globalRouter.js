@@ -1,41 +1,29 @@
 import express from "express";
-import passport from 'passport';
-import { home, postHome, search } from '../controllers/boardController';
-import { getJoin, postJoin, logout, getLogin, postLogin, googleLogin, getMe } from '../controllers/userController';
+import { home, search } from '../controllers/boardController';
+import { getJoin, postJoin, logout, getLogin, postLogin, getMe } from '../controllers/userController';
 import { onlyPrivate, onlyPublic } from '../middleware';
 import routes from "../routes";
 
 
 const globalRouter = express.Router();
 
-globalRouter // Join
+globalRouter
     .get(routes.join, onlyPublic, getJoin)
     .post(routes.join, onlyPublic, postJoin, postLogin);
 
     
-globalRouter // Login
+globalRouter 
     .post(routes.login, onlyPublic, postLogin)
     .get(routes.login, onlyPublic, getLogin);
-
-globalRouter.get(routes.google, googleLogin);
-
-globalRouter.get(routes.googleCallback, 
-    passport.authenticate('google', {
-        successRedirect: `${routes.home}`,
-        failureRedirect: `${routes.login}`
-    }
-));
         
 globalRouter
     .get(routes.logout, onlyPrivate, logout)
-    // .post(routes.logout)
 
 globalRouter
     .get(routes.home, home)
-    .post(routes.home, postHome);
-
 
 globalRouter.get(routes.me, getMe);
+
 globalRouter.get(routes.search, search);
 
 export default globalRouter;

@@ -5,17 +5,34 @@ const UserSchema = new mongoose.Schema({
     name: String,
     email: String,
     avatar: String,
-    provider: String,
     comments: [
         {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Comment'
         }
     ],
-    boards: [
+    videos: [
         {
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'Board'
+            ref: 'Video'
+        }
+    ],
+    photos: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Photo'
+        }
+    ],
+    dataByDht: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'DHT11'
+        }
+    ],
+    key: [
+        {
+            type: mongoose.Schema.Types.ObjectId, 
+            ref: 'DHT11'
         }
     ]
 }, { 

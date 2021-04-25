@@ -1,147 +1,284 @@
 import routes from "../routes";
-import Board from "../models/Board";
+import Video from "../models/Video";
+import Photo from "../models/Photo";
 import User from "../models/User"
 import Comment from "../models/Comment"
 
 
 // Global
-export const home = async(req, res) => {
-    try{
-        const boards = await Board.find({}).sort({ _id: -1 });
-        res.render("home", { pageTitle: "Home", boards })
-    } catch(error) {
-        console.log(error);
-        res.render("home", { pageTitle: "Home", boards: [] });
-    }
-};
-
-export const postHome = async (req, res) => {
-    const { 
-        body: { user }
-    } = req;
-    const jsonUser = JSON.parse(user);
-    try {
-        const loggedUser = await User.findOne({ email: jsonUser.email });
-        const boards = await Board.find({}).sort({ _id: -1 });
-        res.render('home', { loggedUser, boards });
-    } catch (err) {
-        console.log(err);
-        res.redirect(routes.login);
-    }
+export const home = (req, res) => {
+        res.render("home", { pageTitle: "Home" })
 };
 
 export const search = async(req, res) => {
     const { 
         query: { term: searchingBy }
     } = req;
-    let boards = [];
+    let videos = [];
+    let photos = [];
     try {
-        boards = await Board.find({
+        videos = await Video.find({
+            title: { $regex: searchingBy, $options: "i"}});
+        photos = await Photo.find({
             title: { $regex: searchingBy, $options: "i"}});
     } catch(err) {
         console.log(err);
     }
-    res.render("Search", { pageTitle: `${Board.title}`, searchingBy, boards })
-    
+    res.render("Search", { pageTitle: `${searchingBy}`, searchingBy, videos, photos });
 };
 
-//Board
-export const boards = (req, res) => {
-    res.render("boards", { pageTitle: "Board" })};
+// Photo
+export const photos = async(req, res) => {
+    try{
+        const photolist = await Photo.find({}).sort({ _id: -1 });
+        res.render("photos", { pageTitle: "Photo", photolist });
+    } catch(err) {
+        console.log(err);
+        res.render("photos", { pageTitle: "Photo", photolist: [] });
+    }
+};
 
-export const getUpload = (req, res) => { 
-    res.render("Upload", { pageTitle: "Upload" })};
+export const getPhotoUpload = (req, res) => { 
+    res.render("photoUpload", { pageTitle: "Upload Photo" })};
 
-export const postUpload = async (req, res) => {
+export const postPhotoUpload = async (req, res) => {
     const {
         body: { title, description },
         file: { path }
     } = req;
-    // To Do: Upload and save video
     try{
-        const newBoard = await Board.create({
-            fileUrl: path,
+        const newPhoto = await Photo.create({
+            photoUrl: path,
             title,
             description,
             creator: req.user.id
         });
-        req.user.boards.push(newBoard.id);
+        req.flash('success', '업로드 성공');
+        req.user.photos.push(newPhoto.id);
         req.user.save();
-        res.redirect(routes.boardDetail(newBoard.id));
+        res.redirect(routes.photoDetail(newPhoto.id));
     } catch(err) {
-        res.redirect(routes.getUpload);
+        res.redirect(routes.photoUpload);
         console.log(err);
     }
 };
 
-export const boardDetail = async(req, res) => {
+export const photoDetail = async(req, res) => {
     const { 
         params: { id }
     } = req;
     try {
-        const board = await Board.findById(id).populate("creator").populate("comments");
-        res.render("boardDetail", { pageTitle: board.title, board })
-    } catch(error) {
-        // alert("존재하지 않는 게시물입니다");
+        const photo = await Photo
+            .findById(id)
+            .populate("creator")
+            .populate("comments");
+        photo.views += 1;
+        photo.save();
+        res.render('photoDetail', { pageTitle: photo.title, photo })
+    } catch(err) {
+        console.log(err);
         res.redirect(routes.home);
     }
 };
 
-export const getEditBoard = async(req, res) => {
+export const getEditPhoto = async(req, res) => {
     const {
         params: { id }
       } = req;
     try {
-        const board = await Board.findById(id);
-        if(board.creator.toString() !== req.user.id) {
+        const photo = await Photo.findById(id);
+        if(String(photo.creator) !== req.user.id) {
             throw Error();
         } else {
-            res.render('editBoard', { pageTitle: `Edit ${board.title}`, board })
+            res.render('editPhoto', { pageTitle: `Edit ${photo.title}`, photo })
         }
     } catch(err) {
+        console.log(err);
         res.redirect(routes.home);
     }
 };
 
-export const postEditBoard = async(req, res) => {
+export const postEditPhoto = async(req, res) => {
     const { 
         params: { id },
         body: { title, description }
     } = req;
     try {
-        await Board.findOneAndUpdate({ _id: id }, { title, description });
-        res.redirect(routes.boardDetail(id));
+        await Photo.findOneAndUpdate({ _id: id }, { title, description });
+        req.flash('success', '수정 완료');
+        res.redirect(routes.photoDetail(id));
     } catch(err) {
+        console.log(err);
         res.redirect(routes.home);
     }
 };
 
-export const deleteBoard = async(req, res) => {
+export const deletePhoto = async(req, res) => {
     const {
         params: { id }
      } = req;
      try {
-         const board = await Board.findById(id);
-         if(board.creator.toString() !== req.user.id) {
+         const photo = await Photo.findById(id);
+         if(String(photo.creator) !== req.user.id) {
             throw Error();
          } else {
-            await Board.findOneAndDelete(id) 
+            const populated = await Photo
+            .findById(id)
+            .populate('creator')
+            .populate('comments');
+            const user = await User.findById(populated.creator._id)
+            const comment = await Comment.findById(populated.comments);
+            const filter = user.photos.filter( index => String(index) !== `${id}`);
+            user.photos = filter;
+            user.save();
+            await Photo.findByIdAndDelete(id);
+            req.flash('success', '삭제 성공');
          }
      } catch(err) { 
          console.log(err)
      }
-     res.redirect(routes.home);
+     res.redirect(`/boards${routes.photos}`);
 };
 
-// Register Board View
+// Video
+export const videos = async(req, res) => {
+    try{
+        const videolist = await Video.find({}).sort({ _id: -1 });
+        res.render("videos", { pageTitle: "Video", videolist });
+    } catch(err) {
+        console.log(err);
+        res.render("videos", { pageTitle: "Video", videolist: [] });
+    }
+};
+
+export const getVideoUpload = (req, res) => { 
+    res.render("videoUpload", { pageTitle: "Upload Video" })};
+
+export const postVideoUpload = async (req, res) => {
+    const {
+        body: { title, description },
+        file: { path }
+    } = req;
+    try{
+        const newvideo = await Video.create({
+            videoUrl: path,
+            title,
+            description,
+            creator: req.user.id
+        });
+        req.flash('success', '업로드 성공');
+        req.user.videos.push(newvideo.id);
+        req.user.save();
+        res.redirect(routes.videoDetail(newvideo.id));
+    } catch(err) {
+        res.redirect(routes.videoUpload);
+        console.log(err);
+    }
+};
+
+export const getVideoDetail = async(req, res) => {
+    const { 
+        params: { id }
+    } = req;
+    try {
+        const video = await Video
+            .findById(id)
+            .populate("creator")
+            .populate("comments");
+        res.render("videoDetail", { pageTitle: video.title, video });
+    } catch(err) {
+        console.log(err);
+        res.redirect(routes.home);
+    }
+};
+
+export const postVideoDetail = async(req, res) => {
+    const {
+        user,
+        params: { id } 
+    } = req;
+    try {
+        const videoCreator = await User.findOne({ videos: id });
+        res.json({
+            loggedUser: user.id,
+            loggedUserName: user.name,
+            videoCreator: videoCreator.id
+        });
+    } catch(err) {
+        console.log(err);
+    } finally {
+        res.end();
+    }
+}
+
+export const getEditVideo = async(req, res) => {
+    const {
+        params: { id }
+      } = req;
+    try {
+        const video = await Video.findById(id);
+        if(String(video.creator) !== req.user.id) {
+            throw Error();
+        } else {
+            res.render('editVideo', { pageTitle: `Edit ${video.title}`, video })
+        }
+    } catch(err) {
+        console.log(err);
+        res.redirect(routes.home);
+    }
+};
+
+export const postEditVideo = async(req, res) => {
+    const { 
+        params: { id },
+        body: { title, description }
+    } = req;
+    try {
+        await Video.findOneAndUpdate({ _id: id }, { title, description });
+        req.flash('success', '수정 완료');
+        res.redirect(routes.videoDetail(id));
+    } catch(err) {
+        console.log(err);
+        res.redirect(routes.home);
+    }
+};
+
+export const deleteVideo = async(req, res) => {
+    const {
+        params: { id },
+        user
+     } = req;
+     try {
+         const video = await Video.findById(id)
+         if (String(video.creator) !== user.id) {
+            throw Error();
+         } else {
+            const video = await Video
+                .findById(id)
+                .populate('creator')
+                .populate('comments');
+            const user = await User.findById(video.creator._id)
+            const filter = user.videos.filter( index => String(index) !== `${id}`);
+            user.videos = filter;
+            user.save();
+            await Video.findByIdAndDelete(id)
+            req.flash('success', '삭제 완료');
+         }
+     } catch(err) { 
+         console.log(err)
+     }
+     res.redirect(`/boards${routes.videos}`);
+};
+
+// Register Video View
 export const postRegiserView = async (req, res) => {
     const {
         params: { id }
     } = req;
     try {
-        const board = await Board.findById(id);
-        board.views += 1;
-        board.save();
+        const video = await Video.findById(id);
+        video.views += 1;
+        video.save();
         res.status(200);
     } catch(err) {
         res.status(400);
@@ -151,23 +288,25 @@ export const postRegiserView = async (req, res) => {
 };
 
 // Add Comments
-export const postAddComment = async (req, res) => {
+export const postAddVideoComment = async (req, res) => {
     const {
         params: { id },
-        body: { comment },
+        body: { comment, displayName },
         user
     } = req;
     try {
-        const board = await Board.findById(id);
+        const video = await Video.findById(id);
         const userComment = await User.findById(user.id);
         const newComment = await Comment.create({
             text: comment,
-            creator: user.id
+            creator: user.id,
+            displayName
         });
         userComment.comments.push(newComment);
-        board.comments.push(newComment.id);
-        board.save();
         userComment.save();
+        video.comments.push(newComment.id);
+        video.save();
+        newComment.save();
     } catch (err) {
         res.status(400);
     } finally {
@@ -175,3 +314,32 @@ export const postAddComment = async (req, res) => {
     }
 };
 
+export const postDeleteVideoComment = async (req, res) => {
+    const {
+        params: { id },
+        body: { commentId },
+        user
+    } = req;
+    try {
+        const video = await Video.findById(id).populate('comments');
+        const comment = await Comment.findById(commentId);
+        console.log(user.id);
+        if (user.id !== String(video.creator) && user.id !== String(comment.creator)){
+            throw Error();
+        } else {
+            const creator = await User.findById(comment.creator);
+            const commentFilter = await creator.comments.filter( index => String(index) !== `${commentId}`);
+            const videoFilter = await video.comments.filter( index => String(index) !== `${commentId}`);
+            creator.comments = commentFilter;
+            video.comments = videoFilter;
+            creator.save();
+            video.save();
+            await Comment.findByIdAndDelete(commentId);
+            req.flash('success', '삭제 완료');
+        }
+    } catch(err){
+        res.status(400);
+    } finally {
+        res.end();
+    }
+}

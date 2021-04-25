@@ -1,9 +1,0 @@
-extends layouts/main
-
-block content
-    .form-container
-        form(action=routes.editBoard(board.id), method="post")
-            input(type="text", placeholder="Title", name="title" value=board.title)
-            textarea(name="description", placeholder="Description")=board.description
-            input(type="submit", value="Update Board")
-        a.form-container__link.form-container__link--delete(href=routes.deleteBoard(board.id)) Delete Board 

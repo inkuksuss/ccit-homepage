@@ -1,9 +1,0 @@
-mixin boardBlock(board = {})
-    .boardBlock
-        a(href=routes.boardDetail(board.id))
-            video.boardBlock__thumbnail(src=`/${board.boardFile}`, controls=false)
-            h4.boardBlock__title=board.title
-            if board.views === 1
-                h6.boardBlock__views 1 view
-            else
-                h6.boardBlock__views #{board.views} views

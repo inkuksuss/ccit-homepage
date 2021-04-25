@@ -33,6 +33,9 @@
         text-transform: uppercase;
         li:not(:last-child) {
           margin-right: 15px;
+          a{
+            color: white;
+          }
         }
       }
       form {

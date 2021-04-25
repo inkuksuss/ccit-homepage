@@ -1,8 +1,8 @@
-.video-detail__container {
+.photo-detail__container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  .video__info {
+  .photo__info {
     width: 100%;
     max-width: 850px;
     margin-top: 25px;
@@ -10,41 +10,32 @@
       width: 100px;
       margin-bottom: 25px;
     }
-    .video__author {
+    .photo__author {
       a {
         color: $bg;
       }
     }
-    .video__title,
-    .video__views,
-    .video__description {
+    .photo__title,
+    .photo__views,
+    .photo__description {
       display: block;
       margin-bottom: 15px;
     }
-    .video__title {
+    .photo__title {
       font-size: 22px;
       font-weight: 300;
     }
-    .video__views {
+    .photo__views {
       font-size: 14px;
     }
-    .video__description {
+    .photo__description {
       font-size: 16px;
     }
   }
-  .video__comments {
+  .photo__comments {
     margin-top: 25px;
-    .video__comment-number {
+    .photo__comment-number {
       font-size: 18px;
-    }
-    .video__comments-list {
-      li {
-        display: flex;
-        justify-content: space-between;
-        a {
-          color: green;
-        }
-      }
     }
   }
 }

@@ -1,17 +1,17 @@
-.boardBlock {
+.photoBlock {
   border: 0.1px solid rgba(0, 0, 0, 0.3);
 
   video {
     margin-bottom: 10px;
     max-width: 100%;
   }
-  .boardBlock__title {
+  .photoBlock__title {
     font-size: 18px;
     font-weight: 600;
     color: $fontBColor;
     margin-bottom: 10px;
   }
-  .boardBlock__views {
+  .photoBlock__views {
     color: $fontSColor;
   }
 }

@@ -1,7 +1,6 @@
 import passport from "passport";
 import routes from "../routes";
 import User from "../models/User";
-// import Session from "../models/"
 
 // Global
 export const getJoin = (req, res) => {
@@ -12,8 +11,9 @@ export const postJoin = async (req, res, next) => {
     const {
         body: { name, email, password, password2 }
     } = req;
-    const checkEmail = await User.findOne({email})
+    const checkEmail = await User.findOne({ email })
     if (password !== password2) {
+        req.flash("error",  '비밀번호가 일치하지 않습니다.');
         res.status(400);
         res.render("join", { pageTitle: "Join" });
     } else if(checkEmail){
@@ -40,90 +40,28 @@ export const getLogin = (req, res) =>
 
 export const postLogin = passport.authenticate("local", {
     failureRedirect: routes.login,
-    successRedirect: routes.home
+    successRedirect: routes.home,
+    successFlash: '환영합니다.',
+    failureFlash: '아이디나 비밀번호를 확인해주세요.'
+
 });
 
-export const googleLogin = passport.authenticate('google',{ scope: [ 'email', 'profile' ], prompt: 'select_account' });
-
-export const googleLoginCallback = async (request, accessToken, refreshToken, profile, done) => {
-    const { 
-        _json: { name, email, picture }
-    } = profile;
-    try {
-        const user = await User.findOne({ email })
-        if(user) {
-            user.provider = "google";
-            user.save();
-            return done(null, user);
-        } else {
-           const newUser = await User.create({
-               email,
-               name,
-               provider: "google",
-               avatar: picture
-           });
-           newUser.save();
-           return done(null, newUser); 
-        }
-    } catch (err) {
-        return done(err);
-    }
-};
-
-export const postKakaoLogin = async (req, res) => {
-    const {
-         params : { id },
-         body: { user: { profile, host }},
-    } = req; // token = req.body.token
-    try {
-        const user = await User.findOne({ 
-            email: id 
-        })
-        if(user) {
-            user.provider = host;
-            user.save();
-            req.session.passport = { 
-                user: id,
-                token: req.body.token 
-            }
-            req.session.save();
-            res.status(200);
-        } else {
-            const newUser = await User.create({
-                name: profile.nickname,
-                email: id,
-                avatar: profile.profile_image_url,
-                provider: host
-            })
-            newUser.save();
-            req.session.passport = { 
-                user: id,
-                token: req.body.token 
-            }
-            res.status(200);
-        }    
-    } catch(err) {
-        res.status(400);
-        console.log(err);
-    } finally {
-        res.end();
-    }
-};
-
 export const logout = (req, res) => {
-    req.session.destroy(() => {
-        req.logout();
-        res.clearCookie('connect.sid');
-        res.redirect(routes.login);
-    }); 
+    req.flash('info', '로그아웃 완료');
+    req.logout();
+    res.redirect(routes.login);
+    // req.session.destroy(() => {
+    //     res.clearCookie('connect.sid');
+    // }); 
 };
 
 export const getMe =  async (req, res) => {
     const { 
         user: { id }
     } = req;
+    console.log(id);
     try {
-        const user = await User.findById(id).populate('boards');
+        const user = await User.findById(id).populate('videos').populate('photos');
         res.render("userDetail", { pageTitle: "User Detail", user });
     } catch(err) {
         res.redirect(routes.home);
@@ -133,13 +71,14 @@ export const getMe =  async (req, res) => {
 // Users
 export const userDetail = async (req, res) => {
     const {
-      params: { id }
+        params: { id }
     } = req;
     try {
-      const user = await User.findById(id).populate('boards');
-      res.render("userDetail", { pageTitle: "User Detail", user });
+        const user = await User.findById(id).populate('videos').populate('photos');
+        res.render("userDetail", { pageTitle: "User Detail", user });
     } catch (error) {
-      res.redirect(routes.home);
+        req.flash('error', '유저가 존재하지 않습니다.');
+        res.redirect(routes.home);
     }
 };
 
@@ -160,8 +99,10 @@ export const postEditProfile = async (req, res) => {
             email,
             avatar: (file ? file.path : req.user.avatar)
         }}, {new: true});
+        req.flash('success', '프로필 수정 완료');
         res.redirect(routes.me);
     } catch (err) {
+        req.flash('error', '프로필 수정 실패');
         res.redirect(routes.editProfile);
     }
 };
@@ -179,15 +120,21 @@ export const postChangePassword =  async (req,res) => {
         } = req;
     try {
         if(newPassword !== newPassword1) {
+            req.flash('error', '비밀번호가 일치하지 않습니다.');
             res.status(400);
             res.redirect(`/users${routes.changePassword}`);
             return;
         }
+        req.flash('error', '비밀번호 변경 완료');
         await req.user.changePassword(oldPassword, newPassword1);
         res.redirect(routes.me);
     } catch(err) {
+        req.flash('error', '비밀번호 변경 실패');
         res.status(400);
         res.redirect(`/users${routes.changePassword}`);
     }
 };
-   
+
+// export const mqtt = (req, res) => {
+//     const 
+// }

@@ -1,0 +1,33 @@
+extends layouts/main
+
+block content
+    .photo-detail__container
+        img(src=`/${photo.photoUrl}`)
+        .photo__info
+            if loggedUser && photo.creator.id === loggedUser.id
+                    a(href=routes.editPhoto(photo.id))
+                        button Edit photo
+            h5.photo__title=photo.title
+            p.photo__description=photo.description
+            if photo.views === 1
+                span.photo__views 1 view
+            else 
+                span.photo__views #{photo.views} views
+            .photo__author
+                |Uploaded by 
+                a(href=routes.userDetail(photo.creator.id))=photo.creator.name
+        .photo__comments
+            if photo.comments.length === 1
+                span.photo__comment-number
+                    span#jsCommentNumber 1
+                    |  comment
+            else  
+                span.photo__comment-number
+                    span#jsCommentNumber=photo.comments.length
+                    |  comments
+            form.add__comment#jsAddComment
+                input(type="text", placeholder="Add a comment")
+            ul.photo__comments-list#jsCommentList
+                each comment in photo.comments.reverse()
+                    li
+                        span=comment.text 

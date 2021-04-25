@@ -1,28 +1,39 @@
 import express from 'express';
-import { boardDetail, boards, deleteBoard, getUpload, getEditBoard, postEditBoard, postUpload } from '../controllers/boardController';
-import { onlyPrivate, uploadBoard } from '../middleware';
+import { deletePhoto, deleteVideo, getEditPhoto, getEditVideo, getPhotoUpload, getVideoDetail, getVideoUpload, photoDetail, photos, postEditPhoto, postEditVideo, postPhotoUpload, postVideoDetail, postVideoUpload, videoDetail, videos } from '../controllers/boardController';
+import { onlyPrivate, uploadPhoto, uploadVideo } from '../middleware';
 import routes from '../routes';
 
 
 const boardRouter = express.Router();
 
-// Board
-boardRouter.get(routes.boards, boards);
+boardRouter.get(routes.photos, photos);
 
-// Upload
 boardRouter
-    .get(routes.upload, onlyPrivate, getUpload)
-    .post(routes.upload, onlyPrivate, uploadBoard, postUpload);
+    .get(routes.photoUpload, onlyPrivate, getPhotoUpload)
+    .post(routes.photoUpload, onlyPrivate, uploadPhoto, postPhotoUpload);
 
-// Board Detail
-boardRouter.get(routes.boardDetail(), boardDetail);
+    
+    boardRouter
+    .get(routes.editPhoto(), onlyPrivate, getEditPhoto)
+    .post(routes.editPhoto(), onlyPrivate, postEditPhoto);
+    
+    boardRouter.get(routes.deletePhoto(), onlyPrivate, deletePhoto);
+    
+    // Video
+    boardRouter.get(routes.videos, videos);
+    
+    boardRouter
+    .get(routes.videoUpload, onlyPrivate, getVideoUpload)
+    .post(routes.videoUpload, onlyPrivate, uploadVideo, postVideoUpload);
+    
+boardRouter.get(routes.photoDetail(), photoDetail);
+boardRouter.get(routes.videoDetail(), getVideoDetail);
+boardRouter.post(routes.videoDetail(), postVideoDetail);
 
-// Edit Board
 boardRouter
-    .get(routes.editBoard(), onlyPrivate, getEditBoard)
-    .post(routes.editBoard(), onlyPrivate, postEditBoard);
+    .get(routes.editVideo(), onlyPrivate, getEditVideo)
+    .post(routes.editVideo(), onlyPrivate, postEditVideo);
 
-// Delete Board
-boardRouter.get(routes.deleteBoard(), onlyPrivate, deleteBoard);
+boardRouter.get(routes.deleteVideo(), onlyPrivate, deleteVideo);
 
 export default boardRouter;

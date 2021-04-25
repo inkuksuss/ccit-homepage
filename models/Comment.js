@@ -12,6 +12,10 @@ const CommentSchema = new mongoose.Schema({
   creator: {
     type: mongoose.Schema.Types.ObjectId,
     rel: "User"
+  },
+  displayName: {
+    type: String,
+    required: "Name is required"
   }
 });
 

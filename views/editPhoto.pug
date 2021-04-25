@@ -1,0 +1,9 @@
+extends layouts/main
+
+block content
+    .form-container
+        form(action=routes.editPhoto(photo.id), method="post")
+            input(type="text", placeholder="제목", name="title" value=photo.title)
+            textarea(name="description", placeholder="내용")=photo.description
+            input(type="submit", value="이미지 수정")
+        a.form-container__link.form-container__link--delete(href=routes.deletePhoto(photo.id)) 이미지 삭제 

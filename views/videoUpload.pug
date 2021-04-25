@@ -1,0 +1,13 @@
+extends layouts/main
+
+block content
+    .form-container
+        .record-container#jsRecordContainer
+            video#jsVideoPreview
+            button#jsRecordBtn 녹화시작
+        form(action=`/boards${routes.videoUpload}`, method="post", enctype="multipart/form-data")
+            label(for="file") 동영상 파일
+            input(type="file", id="file", name="videoFile", required=true, accept="video/*")
+            input(type="text", placeholder="제목", name="title")
+            textarea(name="description", placeholder="내용")
+            input(type="submit", value="동영상 업로드")

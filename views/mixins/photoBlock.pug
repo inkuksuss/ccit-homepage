@@ -1,0 +1,9 @@
+mixin photoBlock(photo = {})
+    .photoBlock
+        a(href=routes.photoDetail(photo.id))
+            img.photoBlock__thumbnail(src=`/${photo.photoFile}`)
+            h4.photoBlock__title=photo.title
+            if photo.views === 1
+                h6.photoBlock__views 1 view
+            else
+                h6.photoBlock__views #{photo.views} views

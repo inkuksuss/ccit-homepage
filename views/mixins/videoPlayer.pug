@@ -1,6 +1,6 @@
-mixin videoPlayer(board = {})
+mixin videoPlayer(video = {})
     .videoPlayer#jsVideoPlayer
-        video(src=`/${board.src}`, crossOrigin="anonymous")
+        video(src=`/${video.src}`, crossOrigin="anonymous")
         .videoPlayer__controls
             .videoPlayer__column
                 span#jsVolumeBtn

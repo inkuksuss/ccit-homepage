@@ -10,21 +10,19 @@ header.header
             ul  
                 if !loggedUser
                     li
-                        a(href=routes.join) Join
+                        a(href=`/boards${routes.videos}`) 게시판
                     li
-                        a(href=routes.login) Log In
-
-                else if (loggedUser.provider === "kakao")
+                        a(href=`/boards${routes.photos}`) 게시판
                     li
-                        a(href=`/boards${routes.upload}`) Upload
+                        a(href=routes.join) 회원가입
                     li
-                        a(href=routes.me) Profile
-                    li
-                        a.social-logout--kakao(href="javascript:void(0);" onClick="kakaoLogout();return false;") Logout
+                        a(href=routes.login) 로그인
                 else 
                     li
-                        a(href=`/boards${routes.upload}`) Upload
+                        a(href=`/boards${routes.videos}`) 게시판
                     li
-                        a(href=routes.me) Profile
+                        a(href=`/boards${routes.photos}`) 게시판
                     li
-                        a(href=routes.logout) Log Out
+                        a(href=routes.me) 내 정보
+                    li
+                        a(href=routes.logout) 로그아웃

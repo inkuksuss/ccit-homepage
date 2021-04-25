@@ -2,13 +2,16 @@
 @import "config/reset.scss";
 
 @import "pages/videoDetail.scss";
+@import "pages/photoDetail.scss";
 @import "pages/home.scss";
 
 @import "partials/videoPlayer.scss";
-@import "partials/boardBlock.scss";
+@import "partials/videoBlock.scss";
+@import "partials/photoBlock.scss";
 @import "partials/header.scss";
 @import "partials/form.scss";
 @import "partials/videoRecorder.scss";
+@import "partials/messages.scss";
 
 * {
   box-sizing: border-box;
@@ -18,7 +21,8 @@ body {
   margin-top: 120px;
   width: 100%;
   background-color: #ffffff;
-  .boards {
+  .videos,
+  .photos {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
   }
