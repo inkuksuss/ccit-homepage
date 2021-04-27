@@ -21,7 +21,7 @@ const app = express();
 const client = mqtt.connect("mqtt://127.0.0.1");
 
 client.on("connect", () => {
-    console.log("mqtt conneted");
+    console.log("😇Mqtt Connect");
     client.subscribe('topic'); // 읽을 토픽
 });
 
@@ -69,7 +69,7 @@ app.use(session({
     // cookie : { // 쿠키에 들어가는 세션 ID값의 옵션
     //     maxAge : 3 * 60 * 60 
     // },
-    store: Mongostore.create({ mongoUrl: process.env.MONGO_URL, autoRemove: 'native', ttl: 60 * 60}),
+    store: Mongostore.create({ mongoUrl: process.env.MONGO_URL, autoRemove: 'native', ttl: 60 * 60 }),
 }));
 app.use(flash());
 app.use(passport.initialize());

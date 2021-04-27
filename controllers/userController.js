@@ -135,6 +135,5 @@ export const postChangePassword =  async (req,res) => {
     }
 };
 
-// export const mqtt = (req, res) => {
-//     const 
-// }
+export const userMqtt = (req, res) => {
+    res.render("socket", { pageTitle: "Socket"})};
