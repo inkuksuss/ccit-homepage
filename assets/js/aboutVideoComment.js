@@ -4,6 +4,7 @@ const addCommentForm = document.getElementById("jsAddComment");
 const commentList = document.getElementById("jsCommentList");
 const commentNumber = document.getElementById("jsCommentNumber");
 const deleteCommentForms = document.querySelectorAll('.jsDeleteComment');
+const updateCommentForms = document.querySelectorAll('.jsUpdateComment');
 
 let loggedUser;
 let loggedUserName;
@@ -13,13 +14,23 @@ const increaseNumber = () => {
     commentNumber.innerHTML = parseInt(commentNumber.innerHTML, 10) + 1;
 };
 
+const reloadPage = () => {
+    window.location.reload();
+};
+
 const addComment = comment => {
     const li = document.createElement("li");
     const span = document.createElement("span");
-    const link = document.createElement("span");
+    const link = document.createElement("a");
+    const reloadBtn = document.createElement('button');
+    const icon = document.createElement('i');
     span.innerHTML = comment;
     link.innerHTML = loggedUserName;
-    li.append(span, link);
+    link.setAttribute("href",`/users/${loggedUser}`);
+    li.append(span, link, reloadBtn);
+    icon.classList.add("fas", "fa-sync-alt")
+    reloadBtn.appendChild(icon);
+    reloadBtn.addEventListener('click', reloadPage);
     commentList.prepend(li); 
     increaseNumber();
 };
@@ -78,6 +89,51 @@ function deleteInit() {
     };
 }
 
+const updateComment = (comment, commentId) => {
+    const inputContainer = document.querySelectorAll('.jsUpdateTarget');
+    for(let i = 0; i < inputContainer.length; i++) {
+        if(inputContainer[i].value === commentId) {
+            const targetInput = inputContainer[i];
+            const form = targetInput.parentNode;
+            const li = form.parentNode;
+            li.firstChild.innerHTML = `${comment}`;
+        };
+    };
+}
+
+const sendUpdate = async (comment, commentId) => {
+    const videoId = window.location.href.split("/boards/video/")[1];
+    const response = await axios({
+        url: `/api/${videoId}/video/comment/update`,
+        method: "POST",
+        data: {
+            comment,
+            commentId
+        }
+    });
+    if (response.status === 200) {
+        updateComment(comment,commentId);
+    }
+};
+
+const handleUpdate = (event) => {
+    event.preventDefault();
+    const updateInput = event.target.querySelector('.jsUpdateInput');
+    const updateTarget = event.target.querySelector('.jsUpdateTarget');
+    updateInput.classList.toggle("visible");
+    const comment = updateInput.value;
+    const commentId = updateTarget.value;
+    if(comment) {
+        sendUpdate(comment, commentId);
+    }
+};
+
+function updateInit() {
+    for(let i = 0; i < updateCommentForms.length; i++) {
+        updateCommentForms[i].addEventListener("submit", handleUpdate);
+    };
+};
+
 const authenticationUser = async() => {
     const url = window.location.href;
     try {
@@ -93,6 +149,7 @@ const authenticationUser = async() => {
     if(loggedUser && videoCreator && loggedUserName) { 
         addInit();
         deleteInit();
+        updateInit();
     }
 };
 

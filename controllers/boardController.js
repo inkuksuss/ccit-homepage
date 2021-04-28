@@ -314,6 +314,29 @@ export const postAddVideoComment = async (req, res) => {
     }
 };
 
+export const postUpdateVideoComment = async (req, res) => {
+    const {
+        body: { comment, commentId },
+        user
+    } = req;
+    try {
+        const comments = await Comment.findById(commentId);
+        if (user.id !== String(comments.creator)){
+            throw Error();
+        } else {
+            await Comment.findByIdAndUpdate(commentId, 
+                {$set: 
+                    { text: comment }
+                }, {new: true });
+            req.flash('success', '수정 완료');
+        }
+    } catch(err){
+        res.status(400);
+    } finally {
+        res.end();
+    }
+}
+
 export const postDeleteVideoComment = async (req, res) => {
     const {
         params: { id },

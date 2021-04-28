@@ -39,20 +39,23 @@ block content
                             if (loggedUser.id === video.creator.id)
                                 form.jsDeleteComment
                                     input.jsDeleteInput(type="hidden" value=comment.id)
-                                    button.jsDeleteIcon(onclick="return confirm('정말로 삭제하시겠습니까?')")
+                                    button.jsDeleteBtn(onclick="return confirm('정말로 삭제하시겠습니까?')")
                                         i.fas.fa-trash-alt
                             each loggedUserComment in loggedUser.comments
                                 if (comment.id === String(loggedUserComment) && loggedUser.id === video.creator.id)
-                                    form.jsUpdateComment(name=comment.id)
-                                        input.jsUpdateInput(type="hidden" value=comment.id)
-                                        //- a.jsUpdateIcon(href="javascript:void(0);" onclick="javascript:document.querySelector('.jsDeleteComment').submit(); return false;")
-                                            i.fas.fa-pencil-alt
+                                    form.jsUpdateComment
+                                        input.jsUpdateTarget(type="hidden" value=comment.id)
+                                        button.jsUpdateBtn
+                                            i.fas.fa-user-edit
+                                        input.jsUpdateInput(type="text" placeholder=`${comment.text}`)
                                 else if (comment.id === String(loggedUserComment) && loggedUser.id !== video.creator.id)
                                     form.jsDeleteComment
                                         input.jsDeleteInput(type="hidden" value=comment.id)
-                                        button.jsDeleteIcon(onclick="return confirm('정말로 삭제하시겠습니까?')")
+                                        button.jsDeleteBtn(onclick="return confirm('정말로 삭제하시겠습니까?')")
                                             i.fas.fa-trash-alt
-                                    form#jsUpdateComment(name=comment.id)
-                                        input#jsUpdateInput(type="hidden" value=comment.id)
-                                        //- a#jsUpdateIcon(href="javascript:void(0);" onclick="javascript:document.querySelector('.jsDeleteComment').submit(); return false;")
-                                            i.fas.fa-pencil-alt
+                                    form.jsUpdateComment
+                                        input.jsUpdateTarget(type="hidden" value=comment.id)
+                                        button.jsUpdateBtn
+                                            i.fas.fa-user-edit
+                                        input.jsUpdateInput(type="text" placeholder=`${comment.text}`)
+                                       

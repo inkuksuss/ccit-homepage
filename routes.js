@@ -130,7 +130,13 @@ const routes = {
     api: API,
     registerView: REGISTER_VIEW,
     addVideoComment: ADD_COMMENT_VIDEO,
-    updateVideoComment: UPDATE_COMMENT_VIDEO,
+    updateVideoComment: id => {
+      if(id) {
+        return `/api/${id}/video/comment/delete`
+      } else {
+        return UPDATE_COMMENT_VIDEO;
+      }
+    },
     deleteVideoComment: id => {
       if(id) {
         return `/api/${id}/video/comment/delete`

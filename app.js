@@ -7,8 +7,6 @@ import passport from "passport";
 import session from "express-session";
 import Mongostore from "connect-mongo";
 import flash from "express-flash";
-import mqtt from "mqtt";
-import DHT11 from "./models/DHT11";
 import globalRouter from "./routers/globalRouter";
 import userRouter from "./routers/userRouter";
 import boardRouter from "./routers/boardRouter";
@@ -18,37 +16,6 @@ import { localsMiddleware } from './middleware';
 import "./passport";
 
 const app = express();
-const client = mqtt.connect("mqtt://127.0.0.1");
-
-client.on("connect", () => {
-    console.log("😇Mqtt Connect");
-    client.subscribe('topic'); // 읽을 토픽
-});
-
-client.on("message", (topic, message) => {
-    const obj = JSON.parse(message);
-    const date = new Date();
-    const year = date.getFullYear();
-    const month = date.getMonth();
-    const today = date.getDate();
-    const hours = date.getHours();
-    const mintues = date.getMinutes();
-    const seconds = date.getSeconds();
-    obj.createdAt = new Date(Date.UTC(year, month, today, hours, mintues, seconds));
-    const dht11 = new DHT11({
-        tmp: obj.tmp,
-        hum: obj.hum,
-        createdAt: obj.createdAt,
-        key: obj.key
-    });
-    try{
-        dht11.save();
-        console.log('Success MQTT');
-    } catch (err) {
-        console.log({ message: err });
-    }
-})
-
 
 //middlewares
 app.use(helmet({ 

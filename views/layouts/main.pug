@@ -30,4 +30,46 @@ html
         include ../partials/footer
         script(src="/socket.io/socket.io.js")
         script(src="/static/main.js") // 여기 없으면 안돼용~
+        script.
+            const socket = io('/');
+            const socketContainer = document.getElementById("jsSocketContainer");
+            let timer = null;
+
+
+            function sendMessage(message) {
+                socket.emit("newMessage", { message });
+                console.log(`You: ${message}`);
+            };
+
+            function setNickname(nickname) {
+                socket.emit("setNickname", { nickname });
+            };
+
+            function handleMessageNotif(data) {
+                const { message, nickname } = data;
+                console.log(`${nickname}: ${message}`);
+            };
+            
+            socket.on("messageNotif", handleMessageNotif);
+
+            if(socketContainer){
+                socket.on("mqttSubmit", (res) => {
+                    const data = JSON.parse(res);
+                    const span = document.getElementById('jsSocketData');
+                    span.innerHTML = `${data.tmp} : ${data.hum}`;
+                });
+                if(timer === null) {
+                    timer = window.setInterval("timer1()", 1000);
+                }
+                function timer1() {
+                    socket.emit("mqttSubmit", JSON.stringify({}));
+                }
+
+            }
+
+
+
+
+
+            
 
