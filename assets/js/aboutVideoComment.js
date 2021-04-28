@@ -59,7 +59,6 @@ const handleSubmit = event => {
     event.preventDefault();
     const commentInput = addCommentForm.querySelector("input");
     const comment = commentInput.value;
-    console.log(loggedUser);
     if(loggedUser){
         sendComment(comment);
         commentInput.value = "";
