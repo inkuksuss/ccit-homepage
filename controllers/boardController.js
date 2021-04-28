@@ -199,11 +199,13 @@ export const postVideoDetail = async(req, res) => {
     } = req;
     try {
         const videoCreator = await User.findOne({ videos: id });
-        res.json({
-            loggedUser: user.id,
-            loggedUserName: user.name,
-            videoCreator: videoCreator.id
-        });
+        if(user) {
+            res.json({
+                loggedUser: user.id,
+                loggedUserName: user.name,
+                videoCreator: videoCreator.id
+            });
+        }
     } catch(err) {
         console.log(err);
     } finally {
@@ -328,7 +330,6 @@ export const postUpdateVideoComment = async (req, res) => {
                 {$set: 
                     { text: comment }
                 }, {new: true });
-            req.flash('success', '수정 완료');
         }
     } catch(err){
         res.status(400);
@@ -358,7 +359,6 @@ export const postDeleteVideoComment = async (req, res) => {
             creator.save();
             video.save();
             await Comment.findByIdAndDelete(commentId);
-            req.flash('success', '삭제 완료');
         }
     } catch(err){
         res.status(400);

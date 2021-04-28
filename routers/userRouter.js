@@ -13,7 +13,7 @@ userRouter
     .get(routes.changePassword, onlyPrivate, getChangePassword)  
     .post(routes.changePassword, onlyPrivate, postChangePassword);
 
-userRouter.get(routes.userDetail(), onlyPrivate, userDetail);
+userRouter.get(routes.userDetail(), userDetail);
 
 userRouter.get(routes.mqtt(), onlyPrivate, userMqtt);
 

@@ -14,6 +14,11 @@ const increaseNumber = () => {
     commentNumber.innerHTML = parseInt(commentNumber.innerHTML, 10) + 1;
 };
 
+const decreaseNumber = () => {
+    commentNumber.innerHTML = parseInt(commentNumber.innerHTML, 10) - 1;
+}
+
+// 추가
 const reloadPage = () => {
     window.location.reload();
 };
@@ -54,8 +59,14 @@ const handleSubmit = event => {
     event.preventDefault();
     const commentInput = addCommentForm.querySelector("input");
     const comment = commentInput.value;
-    sendComment(comment);
-    commentInput.value = "";
+    console.log(loggedUser);
+    if(loggedUser){
+        sendComment(comment);
+        commentInput.value = "";
+    } else {
+        alert("로그인 후 작성 가능합니다.");
+        commentInput.value = "";
+    }
 };
 
 
@@ -63,6 +74,7 @@ function addInit() {
     addCommentForm.addEventListener("submit", handleSubmit);
 };
 
+//삭제
 const deleteComment = async(commentId) => {
     const videoId = window.location.href.split("/boards/video/")[1];
     await axios({
@@ -80,6 +92,7 @@ const handleDelete = (event) => {
     const commentId = commentInput.value;
     event.currentTarget.parentNode.remove();
     deleteComment(commentId);
+    decreaseNumber();
 }
 
 
@@ -89,6 +102,7 @@ function deleteInit() {
     };
 }
 
+// 수정
 const updateComment = (comment, commentId) => {
     const inputContainer = document.querySelectorAll('.jsUpdateTarget');
     for(let i = 0; i < inputContainer.length; i++) {
@@ -124,8 +138,11 @@ const handleUpdate = (event) => {
     const comment = updateInput.value;
     const commentId = updateTarget.value;
     if(comment) {
-        sendUpdate(comment, commentId);
-    }
+        if(confirm("정말 수정하시겠습니까?")) {
+            sendUpdate(comment, commentId);
+            updateInput.value = "";
+        }
+    };
 };
 
 function updateInit() {
@@ -144,9 +161,9 @@ const authenticationUser = async() => {
             videoCreator = res.data.videoCreator;
         })
     } catch(err) {
+        alert("로그인 유저 정보를 가져올 수 없습니다");
         console.log(err);
-    }
-    if(loggedUser && videoCreator && loggedUserName) { 
+    } finally {
         addInit();
         deleteInit();
         updateInit();
