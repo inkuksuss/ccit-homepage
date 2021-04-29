@@ -37,5 +37,46 @@
     .photo__comment-number {
       font-size: 18px;
     }
+    .photo__comments-list {
+      li {
+        display: flex;
+        justify-content: space-between;
+        a {
+          color: green;
+        }
+        .jsDeletePhotoComment {
+          .jsDeletePhotoBtn {
+            background: #1aab8a;
+            color: #fff;
+            border: none;
+            height: 20px;
+            cursor: pointer;
+            transition: 800ms ease all;
+            outline: none;
+          }
+          button:hover {
+            background: #fff;
+            color: #1aab8a;
+          }
+          button:before,
+          button:after {
+            top: 0;
+            right: 0;
+            height: 2px;
+            width: 0;
+            background: #1aab8a;
+            transition: 400ms ease all;
+          }
+        }
+        .jsUpdatePhotoComment {
+          .jsUpdatePhotoInput {
+            display: none;
+          }
+          .visible {
+            display: block;
+          }
+        }
+      }
+    }
   }
 }

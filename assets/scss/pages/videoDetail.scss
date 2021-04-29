@@ -44,8 +44,8 @@
         a {
           color: green;
         }
-        .jsDeleteComment {
-          .jsDeleteBtn {
+        .jsDeleteVideoComment {
+          .jsDeleteVideoBtn {
             background: #1aab8a;
             color: #fff;
             border: none;
@@ -68,8 +68,8 @@
             transition: 400ms ease all;
           }
         }
-        .jsUpdateComment {
-          .jsUpdateInput {
+        .jsUpdateVideoComment {
+          .jsUpdateVideoInput {
             display: none;
           }
           .visible {

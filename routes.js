@@ -145,7 +145,13 @@ const routes = {
       }
     },
     addPhotoComment: ADD_COMMENT_PHOTO,
-    updatePhotoComment: UPDATE_COMMENT_PHOTO,
+    updatePhotoComment: id => {
+      if(id) {
+        return `/api/${id}/photo/comment/delete`
+      } else {
+        return UPDATE_COMMENT_PHOTO;
+      }
+    },
     deletePhotoComment: id => {
       if(id) {
         return `/api/${id}/photo/comment/delete`

@@ -1,5 +1,5 @@
 import express from 'express';
-import { deletePhoto, deleteVideo, getEditPhoto, getEditVideo, getPhotoUpload, getVideoDetail, getVideoUpload, photoDetail, photos, postEditPhoto, postEditVideo, postPhotoUpload, postVideoDetail, postVideoUpload, videoDetail, videos } from '../controllers/boardController';
+import { deletePhoto, deleteVideo, getEditPhoto, getEditVideo, getPhotoDetail, getPhotoUpload, getVideoDetail, getVideoUpload, photos, postEditPhoto, postEditVideo, postPhotoDetail, postPhotoUpload, postVideoDetail, postVideoUpload, videos } from '../controllers/boardController';
 import { onlyPrivate, uploadPhoto, uploadVideo } from '../middleware';
 import routes from '../routes';
 
@@ -26,7 +26,8 @@ boardRouter
     .get(routes.videoUpload, onlyPrivate, getVideoUpload)
     .post(routes.videoUpload, onlyPrivate, uploadVideo, postVideoUpload);
     
-boardRouter.get(routes.photoDetail(), photoDetail);
+boardRouter.get(routes.photoDetail(), getPhotoDetail);
+boardRouter.post(routes.photoDetail(), postPhotoDetail);
 boardRouter.get(routes.videoDetail(), getVideoDetail);
 boardRouter.post(routes.videoDetail(), postVideoDetail);
 

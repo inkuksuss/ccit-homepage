@@ -22,39 +22,39 @@ block content
         .video__comments
             if video.comments.length === 1
                 span.video__comment-number
-                    span#jsCommentNumber 1
+                    span#jsCommentVideoNumber 1
                     |  comment
             else  
                 span.video__comment-number
-                    span#jsCommentNumber=video.comments.length
+                    span#jsCommentVideoNumber=video.comments.length
                     |  comments
-            form.add__comment#jsAddComment
+            form.add__comment#jsAddVideoComment
                 input(type="text", placeholder="댓글...")
-            ul.video__comments-list#jsCommentList
+            ul.video__comments-list#jsCommentVideoList
                 each comment in video.comments.reverse()
                     li
                         span=comment.text
                         a(href=`${routes.userDetail(comment.creator)}`)=comment.displayName
                         if (loggedUser)
                             if (loggedUser.id === video.creator.id)
-                                form.jsDeleteComment
-                                    input.jsDeleteInput(type="hidden" value=comment.id)
-                                    button.jsDeleteBtn(onclick="return confirm('정말로 삭제하시겠습니까?')")
+                                form.jsDeleteVideoComment
+                                    input.jsDeleteVideoInput(type="hidden" value=comment.id)
+                                    button.jsDeleteVideoBtn(onclick="return confirm('정말로 삭제하시겠습니까?')")
                                         i.fas.fa-trash-alt
                             each loggedUserComment in loggedUser.comments
                                 if (comment.id === String(loggedUserComment) && loggedUser.id === video.creator.id)
-                                    form.jsUpdateComment
-                                        input.jsUpdateTarget(type="hidden" value=comment.id)
-                                        button.jsUpdateBtn
+                                    form.jsUpdateVideoComment
+                                        input.jsUpdateVideoTarget(type="hidden" value=comment.id)
+                                        button.jsUpdateVideoBtn
                                             i.fas.fa-user-edit
-                                        input.jsUpdateInput(type="text" placeholder=`${comment.text}`)
+                                        input.jsUpdateVideoInput(type="text" placeholder=`${comment.text}`)
                                 else if (comment.id === String(loggedUserComment) && loggedUser.id !== video.creator.id)
-                                    form.jsDeleteComment
-                                        input.jsDeleteInput(type="hidden" value=comment.id)
-                                        button.jsDeleteBtn(onclick="return confirm('정말로 삭제하시겠습니까?')")
+                                    form.jsDeleteVideoComment
+                                        input.jsDeleteVideoInput(type="hidden" value=comment.id)
+                                        button.jsDeleteVideoBtn(onclick="return confirm('정말로 삭제하시겠습니까?')")
                                             i.fas.fa-trash-alt
-                                    form.jsUpdateComment
-                                        input.jsUpdateTarget(type="hidden" value=comment.id)
-                                        button.jsUpdateBtn
+                                    form.jsUpdateVideoComment
+                                        input.jsUpdateVideoTarget(type="hidden" value=comment.id)
+                                        button.jsUpdateVideoBtn
                                             i.fas.fa-user-edit
-                                        input.jsUpdateInput(type="text" placeholder=`${comment.text}`)
+                                        input.jsUpdateVideoInput(type="text" placeholder=`${comment.text}`)

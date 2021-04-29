@@ -13,16 +13,9 @@ async function clearComment(videoComments) {
 
 async function clearUserComment(videoComments) {
     for await (const videoComment of videoComments) {
-        // const commentCreator = 
         await User.updateOne({ comments: videoComment.id }, {$pull: { comments: videoComment.id }});
-
-        // const commentFilter = await commentCreator.comments.filter( index => String(index) !== `${videoComment.id}`);
-        // commentCreator.comments = commentFilter;
-        // commentCreator.save();
-        // console.log(commentCreator.comments);
     };
-};
-
+}; // 유저의 포함된 댓글들을 삭제하는 함수
 
 // Global
 export const home = (req, res) => {
@@ -82,7 +75,7 @@ export const postPhotoUpload = async (req, res) => {
     }
 };
 
-export const photoDetail = async(req, res) => {
+export const getPhotoDetail = async(req, res) => {
     const { 
         params: { id }
     } = req;
@@ -97,6 +90,24 @@ export const photoDetail = async(req, res) => {
     } catch(err) {
         console.log(err);
         res.redirect(routes.home);
+    }
+};
+
+export const postPhotoDetail =(req, res) => {
+    const {
+        user 
+    } = req;
+    try {
+        if(user) {
+            res.json({
+                loggedUser: user.id,
+                loggedUserName: user.name,
+            });
+        }
+    } catch(err) {
+        console.log(err);
+    } finally {
+        res.end();
     }
 };
 
@@ -157,6 +168,86 @@ export const deletePhoto = async(req, res) => {
          console.log(err)
      }
      res.redirect(`/boards${routes.photos}`);
+};
+
+// 댓글 추가
+export const postAddPhotoComment = async (req, res) => {
+    const {
+        params: { id },
+        body: { comment, displayName },
+        user
+    } = req;
+    try {
+        const photo = await Photo.findById(id);
+        const userComment = await User.findById(user.id);
+        const newComment = await Comment.create({
+            text: comment,
+            creator: user.id,
+            displayName
+        });
+        userComment.comments.push(newComment);
+        userComment.save();
+        photo.comments.push(newComment.id);
+        photo.save();
+        newComment.save();
+    } catch (err) {
+        res.status(400);
+    } finally {
+        res.end();
+    }
+};
+
+// 댓글 수정
+export const postUpdatePhotoComment = async (req, res) => {
+    const {
+        body: { comment, commentId },
+        user
+    } = req;
+    try {
+        const comments = await Comment.findById(commentId);
+        if (user.id !== String(comments.creator)){
+            throw Error();
+        } else {
+            await Comment.findByIdAndUpdate(commentId, 
+                {$set: 
+                    { text: comment }
+                }, {new: true });
+        }
+    } catch(err){
+        res.status(400);
+    } finally {
+        res.end();
+    }
+};
+
+// 댓글 삭제
+export const postDeletePhotoComment = async (req, res) => {
+    const {
+        params: { id },
+        body: { commentId },
+        user
+    } = req;
+    try {
+        const photo = await Photo.findById(id).populate('comments');
+        const comment = await Comment.findById(commentId);
+        console.log(user.id);
+        if (user.id !== String(photo.creator) && user.id !== String(comment.creator)){
+            throw Error();
+        } else {
+            const creator = await User.findById(comment.creator);
+            const commentFilter = await creator.comments.filter( index => String(index) !== `${commentId}`);
+            const photoFilter = await photo.comments.filter( index => String(index) !== `${commentId}`);
+            creator.comments = commentFilter;
+            photo.comments = photoFilter;
+            creator.save();
+            photo.save();
+            await Comment.findByIdAndDelete(commentId);
+        }
+    } catch(err){
+        res.status(400);
+    } finally {
+        res.end();
+    }
 };
 
 // Video
