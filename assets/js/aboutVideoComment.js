@@ -1,3 +1,7 @@
+/* eslint-disable no-restricted-globals */
+/* eslint-disable object-shorthand */
+/* eslint-disable no-alert */
+/* eslint-disable no-restricted-syntax */
 /* eslint-disable no-unused-vars */
 import axios from "axios";
 
@@ -9,7 +13,6 @@ const updateVideoCommentForms = document.querySelectorAll('.jsUpdateVideoComment
 
 let loggedUser;
 let loggedUserName;
-// let videoCreator;
 
 const increaseVideoNumber = () => {
     commentVideoNumber.innerHTML = parseInt(commentVideoNumber.innerHTML, 10) + 1;
@@ -97,17 +100,17 @@ const handleVideoDelete = (event) => {
 
 
 function deleteVideoInit() {
-    for(let i = 0; i < deleteVideoCommentForms.length; i++) {
-        deleteVideoCommentForms[i].addEventListener("submit", handleVideoDelete);
+    for(const deleteVideoCommentForm of deleteVideoCommentForms) {
+        deleteVideoCommentForm.addEventListener("submit", handleVideoDelete);
     };
 }
 
 // 수정
 const updateVideoComment = (comment, commentId) => {
     const inputContainer = document.querySelectorAll('.jsUpdateVideoTarget');
-    for(let i = 0; i < inputContainer.length; i++) {
-        if(inputContainer[i].value === commentId) {
-            const targetInput = inputContainer[i];
+    for(const input of inputContainer) {
+        if(input.value === commentId) {
+            const targetInput = input;
             const form = targetInput.parentNode;
             const li = form.parentNode;
             li.firstChild.innerHTML = `${comment}`;
@@ -146,8 +149,8 @@ const handleVideoUpdate = (event) => {
 };
 
 function updateVideoInit() {
-    for(let i = 0; i < updateVideoCommentForms.length; i++) {
-        updateVideoCommentForms[i].addEventListener("submit", handleVideoUpdate);
+    for(const updateVideoCommentForm of updateVideoCommentForms) {
+        updateVideoCommentForm.addEventListener("submit", handleVideoUpdate);
     };
 };
 
@@ -158,7 +161,6 @@ const authenticationVideoUser = async() => {
         .then(res => {
             loggedUser = res.data.loggedUser;
             loggedUserName = res.data.loggedUserName;
-            // videoCreator = res.data.videoCreator;
         })
     } catch(err) {
         alert("로그인 유저 정보를 가져올 수 없습니다");

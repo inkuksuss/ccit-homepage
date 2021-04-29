@@ -1,3 +1,4 @@
+/* eslint-disable object-shorthand */
 /* eslint-disable no-restricted-syntax */
 import routes from "../routes";
 import Video from "../models/Video";
@@ -5,15 +6,15 @@ import Photo from "../models/Photo";
 import User from "../models/User"
 import Comment from "../models/Comment"
 
-async function clearComment(videoComments) {
-    for await (const videoComment of videoComments) {
-        await Comment.findByIdAndDelete(videoComment.id);
+async function clearComment(comments) {
+    for await (const comment of comments) {
+        await Comment.findByIdAndDelete(comment.id);
     };
 }; // 비디오의 포함된 댓글들을 삭제하는 함수
 
-async function clearUserComment(videoComments) {
-    for await (const videoComment of videoComments) {
-        await User.updateOne({ comments: videoComment.id }, {$pull: { comments: videoComment.id }});
+async function clearUserComment(comments) {
+    for await (const comment of comments) {
+        await User.updateOne({ comments: comment.id }, {$pull: { comments: comment.id }});
     };
 }; // 유저의 포함된 댓글들을 삭제하는 함수
 
@@ -84,8 +85,6 @@ export const getPhotoDetail = async(req, res) => {
             .findById(id)
             .populate("creator")
             .populate("comments");
-        photo.views += 1;
-        photo.save();
         res.render('photoDetail', { pageTitle: photo.title, photo })
     } catch(err) {
         console.log(err);
@@ -145,29 +144,49 @@ export const postEditPhoto = async(req, res) => {
 
 export const deletePhoto = async(req, res) => {
     const {
-        params: { id }
-     } = req;
-     try {
-         const photo = await Photo.findById(id);
-         if(String(photo.creator) !== req.user.id) {
-            throw Error();
-         } else {
-            const populated = await Photo
+        params: { id },
+        user
+    } = req;
+    try {
+        const photo = await Photo
             .findById(id)
             .populate('creator')
             .populate('comments');
-            const user = await User.findById(populated.creator._id)
-            const comment = await Comment.findById(populated.comments);
-            const filter = user.photos.filter( index => String(index) !== `${id}`);
-            user.photos = filter;
-            user.save();
+        if (String(photo.creator.id) !== user.id) {
+           throw Error(); 
+        } else {
+            const photoCreator = await User.findById(photo.creator._id)
+            const photoFilter = photoCreator.photos.filter( index => String(index) !== `${id}`);
+            photoCreator.photos = photoFilter;
+            photoCreator.save();
+            clearUserComment(photo.comments);
+            clearComment(photo.comments);
             await Photo.findByIdAndDelete(id);
-            req.flash('success', '삭제 성공');
-         }
-     } catch(err) { 
-         console.log(err)
-     }
-     res.redirect(`/boards${routes.photos}`);
+            await Comment.findByIdAndDelete(photo.comments.id);
+            req.flash('success', '삭제 완료');
+        }
+    } catch(err) { 
+        console.log(err)
+    } finally {
+        res.redirect(`/boards${routes.photos}`);
+    }
+};
+
+// 비디오 조회수
+export const postRegiserPhotoView = async (req, res) => {
+    const {
+        params: { id }
+    } = req;
+    try {
+        const photo = await Photo.findById(id);
+        photo.views += 1;
+        photo.save();
+        res.status(200);
+    } catch(err) {
+        res.status(400);
+    } finally {
+        res.end();
+    }
 };
 
 // 댓글 추가
@@ -385,8 +404,8 @@ export const deleteVideo = async(req, res) => {
     }
 };
 
-// Register Video View
-export const postRegiserView = async (req, res) => {
+// 비디오 조회수
+export const postRegiserVideoView = async (req, res) => {
     const {
         params: { id }
     } = req;

@@ -1,3 +1,4 @@
+/* eslint-disable no-use-before-define */
 import getBlobDuration from "get-blob-duration";
 
 const videoContainer = document.getElementById("jsVideoPlayer");
@@ -9,7 +10,7 @@ const currentTime = document.getElementById("currentTime");
 const totalTime = document.getElementById("totalTime");
 const volumeRange = document.getElementById("jsVolume");
 
-const registerView = () => {
+const registerVideoView = () => {
     const videoId = window.location.href.split("/boards/")[1];
     fetch(`/api/${videoId}/view`, {
         method: "POST"
@@ -42,7 +43,7 @@ function handleVolumeClick() {
         videoPlayer.muted = true;
         volumeBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
     }
-}
+};
 
 function exitFullscreen() {
     fullScreenBtn.innerHTML = '<i class="fas fa-expand"></i>';
@@ -56,7 +57,7 @@ function exitFullscreen() {
       } else if (document.msExitFullscreen) {
         document.msExitFullscreen();
         }
-}
+};
 
 function goFullScreen() {
     if (videoContainer.requestFullscreen) {
@@ -71,7 +72,7 @@ function goFullScreen() {
     fullScreenBtn.innerHTML = '<i class="fas fa-compress"></i>';
     fullScreenBtn.removeEventListener('click', goFullScreen);
     fullScreenBtn.addEventListener('click', exitFullscreen);
-}
+};
 
 const formatDate = seconds => {
     const secondsNumber = parseInt(seconds, 10);
@@ -93,21 +94,23 @@ const formatDate = seconds => {
   
 function getCurrentTime() {
     currentTime.innerHTML = formatDate(Math.floor(videoPlayer.currentTime));
-}
+};
   
 async function setTotalTime() {
     const blob = await fetch(videoPlayer.src).then(res => res.blob());
     const duration = await getBlobDuration(blob);
+    console.log(duration);
     const totalTimeString = formatDate(duration);
+    console.log(totalTimeString);
     totalTime.innerHTML = totalTimeString;
     setInterval(getCurrentTime, 1000);
-}
+};
   
 function handleEnded() {
-    registerView();
+    registerVideoView();
     videoPlayer.currentTime = 0;
     playBtn.innerHTML = '<i class="fas fa-play"></i>';
-}
+};
 
 function handleDrag(event) {
     const {
@@ -121,18 +124,18 @@ function handleDrag(event) {
     } else {
       volumeBtn.innerHTML = '<i class="fas fa-volume-off"></i>';
     }
-}
+};
 
 function init() {
     videoPlayer.volume = 0.5;
     playBtn.addEventListener('click', handlePlayClick);
     volumeBtn.addEventListener('click', handleVolumeClick);
     fullScreenBtn.addEventListener('click', goFullScreen);
-    videoPlayer.addEventListener("loadedmetadata", setTotalTime);
+    videoPlayer.addEventListener("loadedmetadata", setTotalTime); // 새로고침 시간 초기화 
     videoPlayer.addEventListener("ended", handleEnded);
     volumeRange.addEventListener("input", handleDrag);
-} 
+};
 
 if (videoContainer) {
     init();
-}
+};

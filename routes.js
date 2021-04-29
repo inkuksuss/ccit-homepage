@@ -33,13 +33,17 @@ const DELETE_VIDEO = "/video/:id/delete";
 
 // API
 const API = "/api";
-const REGISTER_VIEW = "/:id/view";
+
+const REGISTER_PHOTO_VIEW = "/photo/:id/view";
 const ADD_COMMENT_PHOTO = "/:id/photo/comment/add";
 const UPDATE_COMMENT_PHOTO = "/:id/photo/comment/update";
 const DELETE_COMMENT_PHOTO = "/:id/photo/comment/delete";
+
+const REGISTER_VIDEO_VIEW = "/video/:id/view";
 const ADD_COMMENT_VIDEO = "/:id/video/comment/add";
 const UPDATE_COMMENT_VIDEO = "/:id/video/comment/update";
 const DELETE_COMMENT_VIDEO = "/:id/video/comment/delete";
+
 const GOOGLE_MAP = "/:id/google-map";
 const HOSPITAL = "/:id/hospital"
 
@@ -128,7 +132,8 @@ const routes = {
 
     // API
     api: API,
-    registerView: REGISTER_VIEW,
+    registerVideoView: REGISTER_VIDEO_VIEW,
+    registerPhotoView: REGISTER_PHOTO_VIEW,
     addVideoComment: ADD_COMMENT_VIDEO,
     updateVideoComment: id => {
       if(id) {

@@ -1,10 +1,11 @@
 import express from "express";
 import routes from "../routes";
-import { postAddPhotoComment, postAddVideoComment, postDeletePhotoComment, postDeleteVideoComment, postRegiserView, postUpdatePhotoComment, postUpdateVideoComment } from "../controllers/boardController";
+import { postAddPhotoComment, postAddVideoComment, postDeletePhotoComment, postDeleteVideoComment, postRegiserPhotoView, postRegiserVideoView, postUpdatePhotoComment, postUpdateVideoComment } from "../controllers/boardController";
 
 const apiRouter = express.Router();
 
-apiRouter.post(routes.registerView, postRegiserView);
+apiRouter.post(routes.registerPhotoView, postRegiserPhotoView);
+apiRouter.post(routes.registerVideoView, postRegiserVideoView);
 
 apiRouter.post(routes.addVideoComment, postAddVideoComment);
 apiRouter.post(routes.updateVideoComment(), postUpdateVideoComment);

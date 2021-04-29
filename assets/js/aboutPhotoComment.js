@@ -1,3 +1,7 @@
+/* eslint-disable no-restricted-globals */
+/* eslint-disable object-shorthand */
+/* eslint-disable no-alert */
+/* eslint-disable no-restricted-syntax */
 /* eslint-disable no-unused-vars */
 import axios from "axios";
 
@@ -6,10 +10,10 @@ const commentPhotoList = document.getElementById("jsCommentPhotoList");
 const commentPhotoNumber = document.getElementById("jsCommentPhotoNumber");
 const deletePhotoCommentForms = document.querySelectorAll('.jsDeletePhotoComment');
 const updatePhotoCommentForms = document.querySelectorAll('.jsUpdatePhotoComment');
+const photoId = window.location.href.split("/boards/photo/")[1];
 
 let loggedUser;
 let loggedUserName;
-// let PhotoCreator;
 
 const increasePhotoNumber = () => {
     commentPhotoNumber.innerHTML = parseInt(commentPhotoNumber.innerHTML, 10) + 1;
@@ -17,7 +21,7 @@ const increasePhotoNumber = () => {
 
 const decreasePhotoNumber = () => {
     commentPhotoNumber.innerHTML = parseInt(commentPhotoNumber.innerHTML, 10) - 1;
-}
+};
 
 // 추가
 const reloadPhotoPage = () => {
@@ -42,7 +46,6 @@ const addPhotoComment = comment => {
 };
 
 const sendPhotoComment = async (comment) => {
-    const photoId = window.location.href.split("/boards/photo/")[1];
     const response = await axios({
         url: `/api/${photoId}/photo/comment/add`,
         method: "POST",
@@ -97,23 +100,23 @@ const handlePhotoDelete = (event) => {
 
 
 function deletePhotoInit() {
-    for(let i = 0; i < deletePhotoCommentForms.length; i++) {
-        deletePhotoCommentForms[i].addEventListener("submit", handlePhotoDelete);
+    for(const deletePhotoCommentForm of deletePhotoCommentForms) {
+        deletePhotoCommentForm.addEventListener("submit", handlePhotoDelete);
     };
-}
+};
 
 // 수정
 const updatePhotoComment = (comment, commentId) => {
     const inputContainer = document.querySelectorAll('.jsUpdatePhotoTarget');
-    for(let i = 0; i < inputContainer.length; i++) {
-        if(inputContainer[i].value === commentId) {
-            const targetInput = inputContainer[i];
+    for(const input of inputContainer) {
+        if(input.value === commentId) {
+            const targetInput = input;
             const form = targetInput.parentNode;
             const li = form.parentNode;
             li.firstChild.innerHTML = `${comment}`;
         };
     };
-}
+};
 
 const sendPhotoUpdate = async (comment, commentId) => {
     const photoId = window.location.href.split("/boards/Photo/")[1];
@@ -146,8 +149,8 @@ const handlePhotoUpdate = (event) => {
 };
 
 function updatePhotoInit() {
-    for(let i = 0; i < updatePhotoCommentForms.length; i++) {
-        updatePhotoCommentForms[i].addEventListener("submit", handlePhotoUpdate);
+    for(const updatePhotoCommentForm of updatePhotoCommentForms) {
+        updatePhotoCommentForm.addEventListener("submit", handlePhotoUpdate);
     };
 };
 
@@ -158,7 +161,6 @@ const authenticationPhotoUser = async() => {
         .then(res => {
             loggedUser = res.data.loggedUser;
             loggedUserName = res.data.loggedUserName;
-            // PhotoCreator = res.data.PhotoCreator;
         })
     } catch(err) {
         alert("로그인 유저 정보를 가져올 수 없습니다");
@@ -170,6 +172,20 @@ const authenticationPhotoUser = async() => {
     }
 };
 
+const registerPhotoView = () => {
+    fetch(`/api/photo/${photoId}/view`, {
+        method: "POST"
+    });
+};
+
+function checkCookie() {
+    if(!document.cookie.split(';').some(item => item.includes(photoId))) {
+        registerPhotoView();
+        document.cookie = `${photoId}=true`;
+    };
+};
+
 if(addPhotoCommentForm){
     authenticationPhotoUser();
-}
+    checkCookie();
+};
