@@ -133,7 +133,7 @@ export const postEditPhoto = async(req, res) => {
         body: { title, description }
     } = req;
     try {
-        await Photo.findOneAndUpdate({ _id: id }, { title, description });
+        await Photo.findByIdAndUpdate(id, { title, description });
         req.flash('success', '수정 완료');
         res.redirect(routes.photoDetail(id));
     } catch(err) {
@@ -365,7 +365,7 @@ export const postEditVideo = async(req, res) => {
         body: { title, description }
     } = req;
     try {
-        await Video.findOneAndUpdate({ _id: id }, { title, description });
+        await Video.findByIdAndUpdate(id, { title, description });
         req.flash('success', '수정 완료');
         res.redirect(routes.videoDetail(id));
     } catch(err) {

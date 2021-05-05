@@ -79,7 +79,6 @@ function addPhotoInit() {
 
 //삭제
 const deletePhotoComment = async(commentId) => {
-    const photoId = window.location.href.split("/boards/photo/")[1];
     await axios({
         url: `/api/${photoId}/photo/comment/delete`,
         method: "POST",
@@ -119,7 +118,6 @@ const updatePhotoComment = (comment, commentId) => {
 };
 
 const sendPhotoUpdate = async (comment, commentId) => {
-    const photoId = window.location.href.split("/boards/Photo/")[1];
     const response = await axios({
         url: `/api/${photoId}/photo/comment/update`,
         method: "POST",

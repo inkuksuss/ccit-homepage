@@ -92,14 +92,15 @@ export const postEditProfile = async (req, res) => {
             name,
             email
          },
+         user: { id },
          file
     } = req;    /////////////////////////////// req.user로 하면 에러뜸 why?
     try {
-        await User.findByIdAndUpdate({_id: req.user._id}, {$set: {  
+        await User.findByIdAndUpdate(id, {       
             name,
             email,
             avatar: (file ? file.path : req.user.avatar)
-        }}, {new: true});
+        }, {new: true});
         req.flash('success', '프로필 수정 완료');
         res.redirect(routes.me);
     } catch (err) {
