@@ -10,10 +10,10 @@ block content
             h5 No videos Found
         each item in videos
             +videoBlock({
+                id:item.id,
                 title:item.title,
                 views:item.views,
-                videoFile:item.videoUrl,
-                id:item.id
+                videoFile:item.videoUrl
             })
 
     .search__photos
@@ -21,8 +21,8 @@ block content
             h5 No photos Found
         each item in photos
             +photoBlock({
-                id:item.id
+                id:item.id,
                 title:item.title,
                 views:item.views,
-                photoFile:item.photoUrl,
+                photoFile:item.photoUrl
             })

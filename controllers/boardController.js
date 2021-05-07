@@ -34,6 +34,7 @@ export const search = async(req, res) => {
             title: { $regex: searchingBy, $options: "i"}});
         photos = await Photo.find({
             title: { $regex: searchingBy, $options: "i"}});
+        console.log(photos);
     } catch(err) {
         console.log(err);
     }
