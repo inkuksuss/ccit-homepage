@@ -14,6 +14,8 @@ import apiRouter from "./routers/apiRouter";
 import routes from "./routes";
 import { localsMiddleware } from './middleware';
 import "./passport";
+import apiUserRouter from './routers/apiUserRouter';
+import apiBoardRouter from './routers/apiBoardRouter';
 
 const app = express();
 
@@ -49,6 +51,8 @@ app.use(routes.home, globalRouter);
 app.use(routes.users, userRouter);
 app.use(routes.boards, boardRouter);
 app.use(routes.api, apiRouter);
+app.use(routes.apiUsers, apiUserRouter);
+app.use(routes.apiBoards, apiBoardRouter);
 
 
 export default app;
