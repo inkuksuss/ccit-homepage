@@ -4,7 +4,6 @@
 /* eslint-disable object-shorthand */
 import passport from "passport";
 import jwt from "jsonwebtoken";
-import routes from "../routes";
 import User from "../models/User";
 
 // Global

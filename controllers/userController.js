@@ -1,7 +1,22 @@
 /* eslint-disable object-shorthand */
 import passport from "passport";
+import { PythonShell } from "python-shell";
 import routes from "../routes";
 import User from "../models/User";
+
+const options = {
+    scriptPath: './.venv',
+    pythonPath: 'python3',
+    pythonOptins: ['-u'],
+    args: []
+}
+
+export const getPython = (req, res) => {
+    PythonShell.run('mongo.py', options, (err, results) => {
+        if(err) console.log(err);
+        res.send(results);
+    })
+};
 
 // Global
 export const getJoin = (req, res) => {

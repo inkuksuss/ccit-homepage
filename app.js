@@ -7,6 +7,7 @@ import passport from "passport";
 import session from "express-session";
 import Mongostore from "connect-mongo";
 import flash from "express-flash";
+import cors from "cors";
 import globalRouter from "./routers/globalRouter";
 import userRouter from "./routers/userRouter";
 import boardRouter from "./routers/boardRouter";

@@ -120,3 +120,4 @@ package-lock.json
 uploads
 static
 .env
+.venv
