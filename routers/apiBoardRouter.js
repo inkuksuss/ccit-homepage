@@ -1,40 +1,41 @@
 import express from 'express';
-import { deletePhoto, deleteVideo, getEditPhoto, getEditVideo, getPhotoDetail, getPhotoUpload, getVideoDetail, getVideoUpload, photos, postEditPhoto, postEditVideo, postPhotoDetail, postPhotoUpload, postVideoDetail, postVideoUpload, videos } from '../controllers/boardController';
-import { onlyPrivate, uploadPhoto, uploadVideo } from '../middleware';
+import { apiDeletePhoto, apiDeleteVideo, apiGetEditPhoto, apiGetEditVideo, apiGetPhotoDetail, apiGetVideoDetail, apiPhotos, apiPostEditPhoto, apiPostEditVideo, apiPostPhotoDetail, apiPostPhotoUpload, apiPostVideoDetail, apiVideos } from '../controllers/apiBoardController';
+import { jwtOnlyPrivate, uploadPhoto, uploadVideo } from '../middleware';
 import routes from '../routes';
 
 
 const apiBoardRouter = express.Router();
 
-apiBoardRouter.get(routes.photos, photos);
+apiBoardRouter.get(routes.photos, apiPhotos);
 
-apiBoardRouter
-    .get(routes.photoUpload, onlyPrivate, getPhotoUpload)
-    .post(routes.photoUpload, onlyPrivate, uploadPhoto, postPhotoUpload);
+apiBoardRouter.post(routes.photoUpload, jwtOnlyPrivate, uploadPhoto, apiPostPhotoUpload);
 
     
 apiBoardRouter
-    .get(routes.editPhoto(), onlyPrivate, getEditPhoto)
-    .post(routes.editPhoto(), onlyPrivate, postEditPhoto);
+    .get(routes.apiEditPhoto(), jwtOnlyPrivate, apiGetEditPhoto)
+    .post(routes.apieditPhoto(), jwtOnlyPrivate, apiPostEditPhoto);
 
-apiBoardRouter.get(routes.deletePhoto(), onlyPrivate, deletePhoto);
+apiBoardRouter.get(routes.apiDeletePhoto(), jwtOnlyPrivate, apiDeletePhoto);
 
 // Video
-apiBoardRouter.get(routes.videos, videos);
+apiBoardRouter.get(routes.apiVideos, apiVideos);
 
 apiBoardRouter
-    .get(routes.videoUpload, onlyPrivate, getVideoUpload)
-    .post(routes.videoUpload, onlyPrivate, uploadVideo, postVideoUpload);
+    .get(routes.apiVideoUpload, jwtOnlyPrivate, apiGetEditVideo)
+    .post(routes.apiVideoUpload, jwtOnlyPrivate, uploadVideo, apiPostEditPhoto);
     
-apiBoardRouter.get(routes.photoDetail(), getPhotoDetail);
-apiBoardRouter.post(routes.photoDetail(), postPhotoDetail);
-apiBoardRouter.get(routes.videoDetail(), getVideoDetail);
-apiBoardRouter.post(routes.videoDetail(), postVideoDetail);
+apiBoardRouter
+    .get(routes.apiPhotoDetail(), apiGetPhotoDetail)
+    .post(routes.apiPhotoDetail(), apiPostPhotoDetail);
 
 apiBoardRouter
-    .get(routes.editVideo(), onlyPrivate, getEditVideo)
-    .post(routes.editVideo(), onlyPrivate, postEditVideo);
+    .get(routes.apiVideoDetail(), apiGetVideoDetail)
+    .post(routes.apiVideoDetail(), apiPostVideoDetail);
 
-apiBoardRouter.get(routes.deleteVideo(), onlyPrivate, deleteVideo);
+apiBoardRouter
+    .get(routes.apiEditVideo(), jwtOnlyPrivate, apiGetEditVideo)
+    .post(routes.apiEditVideo(), jwtOnlyPrivate, apiPostEditVideo);
+
+apiBoardRouter.get(routes.apiDeleteVideo(), jwtOnlyPrivate, apiDeleteVideo);
 
 export default apiBoardRouter;

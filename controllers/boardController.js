@@ -6,17 +6,18 @@ import Photo from "../models/Photo";
 import User from "../models/User"
 import Comment from "../models/Comment"
 
-async function clearComment(comments) {
+export async function clearComment(comments) {
     for await (const comment of comments) {
         await Comment.findByIdAndDelete(comment.id);
     };
 }; // 비디오의 포함된 댓글들을 삭제하는 함수
 
-async function clearUserComment(comments) {
+export async function clearUserComment(comments) {
     for await (const comment of comments) {
         await User.updateOne({ comments: comment.id }, {$pull: { comments: comment.id }});
     };
 }; // 유저의 포함된 댓글들을 삭제하는 함수
+
 
 // Global
 export const home = (req, res) => {
