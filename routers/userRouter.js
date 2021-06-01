@@ -6,7 +6,7 @@ import routes from '../routes';
 const userRouter = express.Router();
 
 userRouter
-    .get(routes.editProfile, onlyPrivate, getEditProfile)
+    .get(routes.editProfile, onlyPrivate, getEditProfile) 
     .post(routes.editProfile, onlyPrivate, uploadAvatar, postEditProfile);
 
 userRouter

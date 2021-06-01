@@ -1,36 +1,36 @@
 // Global
-const HOME = "/";
-const JOIN = "/join";
-const LOGIN = "/login";
-const LOGOUT = "/logout";
-const SEARCH = "/search";
-const ME = "/me";
-const PYTHON = "/python"
+const HOME = "/"; // 홈
+const JOIN = "/join"; // 회원가입
+const LOGIN = "/login"; // 로그인
+const LOGOUT = "/logout"; // 로그아웃
+const SEARCH = "/search"; // 검색
+const ME = "/me"; // 내 정보
+const PYTHON = "/python" // (파이썬 관련 연습)
 
 // Users
 const USERS = "/users";
-const USER_DETAIL = "/:id";
-const EDIT_PROFILE = "/edit-profile";
-const CHANGE_PASSWORD = "/change-password";
-const MQTT = "/:id/mqtt";
+const USER_DETAIL = "/:id"; // 유저 세부정보
+const EDIT_PROFILE = "/edit-profile"; // 개인정보 수정
+const CHANGE_PASSWORD = "/change-password"; // 비밀번호 변경
+const MQTT = "/:id/mqtt"; // Mqtt관련
 const WATER = "/:id/water";
 const EAT = "/:id/eat";
 const CAM = "/:id/cam";
 
 // Boards
-const BOARDS = "/boards";
+const BOARDS = "/boards"; 
 
-const PHOTHS = "/photo";
-const PHOTO_UPLOAD = "/photo/upload";
-const EDIT_PHOTO = "/photo/:id/edit";
-const PHOTO_DETAIL = "/photo/:id";
-const DELETE_PHOTO = "/photo/:id/delete";
+const PHOTHS = "/photo"; // 사진 게시판
+const PHOTO_UPLOAD = "/photo/upload"; // 사진 업로드
+const EDIT_PHOTO = "/photo/:id/edit"; // 사진 수정
+const PHOTO_DETAIL = "/photo/:id"; // 사진 세부정보
+const DELETE_PHOTO = "/photo/:id/delete"; // 사진 삭제
 
-const VIDEOS = "/video";
-const VIDEO_UPLOAD = "/video/upload";
-const EDIT_VIDEO = "/video/:id/edit";
-const VIDEO_DETAIL = "/video/:id";
-const DELETE_VIDEO = "/video/:id/delete";
+const VIDEOS = "/video"; // 비디오 게시판
+const VIDEO_UPLOAD = "/video/upload"; // 비디오 업로드
+const EDIT_VIDEO = "/video/:id/edit"; // 비디오 수정
+const VIDEO_DETAIL = "/video/:id"; // 비디오 세부정보
+const DELETE_VIDEO = "/video/:id/delete"; // 비디오 삭제
 
 // API
 const API = "/api";

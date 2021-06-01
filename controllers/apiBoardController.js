@@ -19,14 +19,14 @@ export const search = async(req, res) => {
             title: { $regex: searchingBy, $options: "i"}});
         photos = await Photo.find({
             title: { $regex: searchingBy, $options: "i"}});
+        res.json({
+            searchingBy,
+            videos,
+            photos
+        });
     } catch(err) {
         throw Error();
     }
-    res.json({
-        searchingBy,
-        videos,
-        photos
-    })
 };
 
 // Photo

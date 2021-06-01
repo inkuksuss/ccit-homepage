@@ -9,17 +9,16 @@ import "./models/User";
 import "./models/Video";
 import "./models/Photo";
 
-function timeConvertor(message) {
-    const obj = JSON.parse(message);
-    const date = new Date();
-    const year = date.getFullYear();
-    const month = date.getMonth();
-    const today = date.getDate();
-    const hours = date.getHours();
-    const mintues = date.getMinutes();
-    const seconds = date.getSeconds();
-    obj.createdAt = new Date(Date.UTC(year, month, today, hours, mintues, seconds));
-};
+// const obj = JSON.parse(message);
+// const date = new Date();
+// const year = date.getFullYear();
+// const month = date.getMonth();
+// const today = date.getDate();
+// const hours = date.getHours();
+// const mintues = date.getMinutes();
+// const seconds = date.getSeconds();
+// obj.createdAt = new Date(Date.UTC(year, month, today, hours, mintues, seconds));
+
 
 dotenv.config();
 
@@ -79,10 +78,6 @@ io.on("connection", socket => {
             socket.emit("mqttSubmit", JSON.stringify(res[0]))
         })
     })
-
-
-    
-
 });
 
 

@@ -1,30 +1,30 @@
 import mongoose from 'mongoose';
 
 const VideoSchema = new mongoose.Schema({
-    videoUrl: {
+    videoUrl: { // 비디오 주소
         type: String,
         required: 'File URL is required'
     },
-    title: {
+    title: { // 비디오 제목
         type: String,
         required: 'Title is required'
     },
-    description: String,
-    views: {
+    description: String, // 비디오 상세정보
+    views: { // 비디오 조회수
         type: Number,
         default: 0
     },
-    createdAt: {
+    createdAt: { // 비디오 생성일
         type: Date,
         default: Date.now
     },
-    comments: [
+    comments: [ // 댓글 Comment 스키마와 연동
         {
           type: mongoose.Schema.Types.ObjectId,
           ref: "Comment"
         }
     ],
-    creator: {
+    creator: { // 생성자 User 스키마와 연동
         type: mongoose.Schema.Types.ObjectId,
         ref: "User"
     }

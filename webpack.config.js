@@ -2,8 +2,8 @@ const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 const MODE = process.env.WEBPACK_ENV;
-const ENTRY_FILE = path.resolve(__dirname, 'assets', 'js', 'main.js');
-const OUTPUT_DIR = path.join(__dirname, 'static');
+const ENTRY_FILE = path.resolve(__dirname, 'assets', 'js', 'main.js'); // 파일 입력
+const OUTPUT_DIR = path.join(__dirname, 'static'); // 파일 변환
 
 
 const config = {

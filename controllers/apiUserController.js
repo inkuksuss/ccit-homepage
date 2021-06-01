@@ -60,13 +60,13 @@ export const apiPostLogin = async (req, res, next) => {
                 success: false,
                 message: "에러 발생"
             })}
-            const token = jwt.sign(
+            const token = jwt.sign( // jwt 토큰 생성
                 { _id: user.id },
                 process.env.JWT_SECRET,
                 { expiresIn: '7d' }
             );
-            user.token = token;
-            user.save();
+            user.token = token; 
+            user.save(); // 유저 디비 저장
             console.log(user);
             return res.json({
                 success: true,

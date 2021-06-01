@@ -7,32 +7,32 @@ const multerVideo = multer({ dest: "uploads/boards/video/" });
 const multerAvatar = multer({ dest: "uploads/boards/avatar/"});
 
 export const localsMiddleware = (req, res , next) => {
-    res.locals.siteName = "CCIT";
-    res.locals.routes = routes;
+    res.locals.siteName = "CCIT"; // siteName, routes, loggedUser 전역변수 만들기
+    res.locals.routes = routes; 
     res.locals.loggedUser = req.user || null;
     next();
 };
 
 export const onlyPublic = (req, res, next) => {
-  if(req.user) {
+  if(req.user) { // req.user가 있다면 홈으로 이동
     res.redirect(routes.home);
-  } else {
+  } else { // 없으면 통과
     next();
   }
 };
 
 export const onlyPrivate = (req, res, next) => {
-  if(req.user) {
+  if(req.user) { // req.user가 있다면 통과
     next();
-  } else {
+  } else { // 없다면 홈으로
     res.redirect(routes.home);
   }
 };
 
 export const jwtOnlyPublic = async(req, res, next) => {
-  if(!req.token || req.token === "") {
+  if(!req.token || req.token === "") { // req.toekn이 없다면 통과
     next();  
-  } else {
+  } else { // 있다면 비인가
     res.status(401).end();
   }
 };

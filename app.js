@@ -36,13 +36,10 @@ app.use(session({
     secret: process.env.COOKIE_SECRET,
     resave: false,
     saveUninitialized: false,
-    // cookie : { // 쿠키에 들어가는 세션 ID값의 옵션
-    //     maxAge : 3 * 60 * 60 
-    // },
     store: Mongostore.create({ mongoUrl: process.env.MONGO_URL, autoRemove: 'native', ttl: 60 * 60 }),
-}));
-app.use(flash());
-app.use(passport.initialize());
+})); // 세션설정
+app.use(flash()); // req.flash 사용가능
+app.use(passport.initialize()); // passport 설정
 app.use(passport.session());
 
 app.use(localsMiddleware);

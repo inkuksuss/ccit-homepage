@@ -7,13 +7,13 @@ import routes from "../routes";
 
 const globalRouter = express.Router();
 
-globalRouter.get(routes.python, getPython);
+globalRouter.get(routes.python, getPython); // get 방식으로 routes.pytion 요청이 오면 getPython 콜백 실행
 
 globalRouter
     .get(routes.join, onlyPublic, getJoin)
-    .post(routes.join, onlyPublic, postJoin, postLogin);
+    .post(routes.join, onlyPublic, postJoin, postLogin); 
+    // post 방식으로 routes.join 요청이 오면 onlyPublic 미들웨어 통과시 postJoin -> postLogin 순으로 실행 
 
-    
 globalRouter 
     .post(routes.login, onlyPublic, postLogin)
     .get(routes.login, onlyPublic, getLogin);

@@ -1,19 +1,19 @@
 import mongoose from "mongoose";
 
 const CommentSchema = new mongoose.Schema({
-  text: {
+  text: { // 댓글 내용
     type: String,
     required: "Text is required",
   },
-  createdAt: {
+  createdAt: { // 생성일
     type: Date,
     default: Date.now,
   },
-  creator: {
+  creator: { // 생성자 User 스키마와 연동
     type: mongoose.Schema.Types.ObjectId,
     rel: "User"
   },
-  displayName: {
+  displayName: { // 댓글 닉네임
     type: String,
     required: "Name is required"
   }
