@@ -34,6 +34,13 @@ const UserSchema = new mongoose.Schema({
             type: mongoose.Schema.Types.ObjectId, 
             ref: 'DHT11'
         }
+    ],
+    complain: [
+        {
+            default: [],
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Video'
+        }
     ]
 }, { 
     versionKey: false

@@ -27,7 +27,13 @@ const VideoSchema = new mongoose.Schema({
     creator: { // 생성자 User 스키마와 연동
         type: mongoose.Schema.Types.ObjectId,
         ref: "User"
-    }
+    },
+    complain: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User"
+        }
+    ]
 });
 
 const model = mongoose.model('Video', VideoSchema);

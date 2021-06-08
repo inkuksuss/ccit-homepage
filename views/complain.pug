@@ -1,0 +1,17 @@
+doctype html
+html
+    head
+        meta(charset="UTF-8")
+        link(rel="shortcut icon" href="#")
+        link(rel="stylesheet", href="/static/styles.css")
+        link(href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css", rel="stylesheet")
+        title #{pageTitle} | #{siteName}
+    body
+        .form-container
+            form#jsComplainForm(method="POST")
+                input#jsVideoComplainTitle(type="text", placeholder="제목", name="title")
+                input(type="hidden", value=loggedUser.id, name="userId")
+                textarea#jsVideoComplainText(name="description", placeholder="신고사유")
+                input#jsVideoComplainBtn(type="submit", value="신고하기")
+                
+        script(src="/static/main.js") // 여기 없으면 안돼용~

@@ -1,5 +1,5 @@
 import express from 'express';
-import { apiDeletePhoto, apiDeleteVideo, apiGetEditPhoto, apiGetEditVideo, apiGetPhotoDetail, apiGetVideoDetail, apiPhotos, apiPostEditPhoto, apiPostEditVideo, apiPostPhotoDetail, apiPostPhotoUpload, apiPostVideoDetail, apiVideos } from '../controllers/apiBoardController';
+import { apiDeletePhoto, apiDeleteVideo, apiGetEditPhoto, apiGetEditVideo, apiGetPhotoDetail, apiGetVideoDetail, apiPhotos, apiPostEditPhoto, apiPostEditVideo, apiPostPhotoDetail, apiPostPhotoUpload, apiPostVideoDetail, apiVideos, getPhotoComplainPopup, getVideoComplainPopup, postPhotoComplain, postPhotoComplainPopup, postVideoComplain, postVideoComplainPopup } from '../controllers/apiBoardController';
 import { jwtOnlyPrivate, uploadPhoto, uploadVideo } from '../middleware';
 import routes from '../routes';
 
@@ -13,7 +13,7 @@ apiBoardRouter.post(routes.photoUpload, jwtOnlyPrivate, uploadPhoto, apiPostPhot
     
 apiBoardRouter
     .get(routes.apiEditPhoto(), jwtOnlyPrivate, apiGetEditPhoto)
-    .post(routes.apieditPhoto(), jwtOnlyPrivate, apiPostEditPhoto);
+    .post(routes.apiEditPhoto(), jwtOnlyPrivate, apiPostEditPhoto);
 
 apiBoardRouter.get(routes.apiDeletePhoto(), jwtOnlyPrivate, apiDeletePhoto);
 
@@ -37,5 +37,13 @@ apiBoardRouter
     .post(routes.apiEditVideo(), jwtOnlyPrivate, apiPostEditVideo);
 
 apiBoardRouter.get(routes.apiDeleteVideo(), jwtOnlyPrivate, apiDeleteVideo);
+
+apiBoardRouter.post(routes.videoComplain(), postVideoComplain);
+apiBoardRouter.get(routes.videoComplainPopup(), getVideoComplainPopup);
+apiBoardRouter.post(routes.videoComplainPopup(), postVideoComplainPopup);
+
+apiBoardRouter.post(routes.photoComplain(), postPhotoComplain);
+apiBoardRouter.get(routes.photoComplainPopup(), getPhotoComplainPopup);
+apiBoardRouter.post(routes.photoComplainPopup(), postPhotoComplainPopup);
 
 export default apiBoardRouter;

@@ -3,7 +3,8 @@
 import Video from "../models/Video";
 import Photo from "../models/Photo";
 import User from "../models/User"
-import Comment from "../models/Comment"
+import Complain from "../models/Complain";
+import Comment from "../models/Comment";
 import { clearComment, clearUserComment } from './boardController';
 
 // Global
@@ -432,4 +433,115 @@ export const postRegiserVideoView = async (req, res) => {
     }
 };
 
+export const postVideoComplain = async (req, res) => {
+    const { 
+        params: { id },
+        body: { videoId }
+    } = req;
+    try {
+        const user = await User.findById(id)
+        const already = user.complain.filter(list => String(list) === String(videoId));
+        console.log(already)
+        if(already.length === 0) {
+            res.json({
+                success: true,
+            });
+        } else {
+            res.json({
+                success: false,
+            });
+        }
+    } catch(err) {
+        console.log(err);
+    }
+};
 
+export const getVideoComplainPopup = (req, res) => {
+    res.render("complain", { pageTitle: "신고" });
+}
+
+export const postVideoComplainPopup = async(req, res) => {
+    const { 
+        body: { title, description, userId },
+        params: { id }
+    } = req;
+    try {
+        const user = await User.findById(userId);
+        const video  = await Video.findById(id);
+        if(user && video) {
+            const exist = video.complain.filter(list => String(list) === String(userId));
+            if(exist.length === 0){
+                await Complain.create({
+                    title,
+                    description,
+                    complainer: userId,
+                    complainedVideo: id
+                });
+                await Video.findByIdAndUpdate(id, {$push: { complain: userId }});
+                await User.findByIdAndUpdate(userId, {$push: { complain: id }});
+                return res.send("신고가 완료되었습니다");
+            } else {
+                return res.send("이미 신고된 게시물입니다.");
+            }
+        } 
+    } catch(err) {
+        console.log(err);
+    }
+}
+
+export const postPhotoComplain = async (req, res) => {
+    const { 
+        params: { id },
+        body: { photosId }
+    } = req;
+    try {
+        const user = await User.findById(id)
+        const already = user.complain.filter(list => String(list) === String(photosId));
+        if(already.length === 0) {
+            res.json({
+                success: true,
+            });
+        } else {
+            res.json({
+                success: false,
+            });
+        }
+    } catch(err) {
+        console.log(err);
+    }
+};
+
+export const getPhotoComplainPopup = (req, res) => {
+    res.render("photoComplain", { pageTitle: "신고" });
+}
+
+export const postPhotoComplainPopup = async(req, res) => {
+    const { 
+        body: { title, description, userId },
+        params: { id }
+    } = req;
+    try {
+        const user = await User.findById(userId);
+        const photo  = await Photo.findById(id);
+        console.log(photo)
+        console.log(user)
+        if(user && photo) {
+            const exist = photo.complain.filter(list => String(list) === String(userId));
+            if(exist.length === 0){
+                await Complain.create({
+                    title,
+                    description,
+                    complainer: userId,
+                    complainedPhoto: id
+                });
+                await Photo.findByIdAndUpdate(id, {$push: { complain: userId }});
+                await User.findByIdAndUpdate(userId, {$push: { complain: id }});
+                return res.send("신고가 완료되었습니다");
+            } else {
+                return res.send("이미 신고된 게시물입니다.");
+            }
+        } 
+    } catch(err) {
+        console.log(err);
+    }
+}

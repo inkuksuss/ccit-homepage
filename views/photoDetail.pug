@@ -16,6 +16,10 @@ block content
             .photo__author
                 |Uploaded by 
                 a(href=routes.userDetail(photo.creator.id))=photo.creator.name
+            if loggedUser && loggedUser.id !== photo.creator.id
+                #jsPhotoComplain
+                    button(type="submit")
+                        i.fas.fa-thumbs-down 신고하기
         .photo__comments
             if photo.comments.length === 1
                 span.photo__comment-number

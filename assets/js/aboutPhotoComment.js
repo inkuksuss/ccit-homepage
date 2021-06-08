@@ -11,10 +11,36 @@ const commentPhotoList = document.getElementById("jsCommentPhotoList");
 const commentPhotoNumber = document.getElementById("jsCommentPhotoNumber");
 const deletePhotoCommentForms = document.querySelectorAll('.jsDeletePhotoComment');
 const updatePhotoCommentForms = document.querySelectorAll('.jsUpdatePhotoComment');
+const photoComplainBtn = document.getElementById('jsPhotoComplain');
 const photoId = window.location.href.split("/boards/photo/")[1];
 
 let loggedUser;
 let loggedUserName;
+
+const photoComplain = async() => {
+    try {
+        const userId = loggedUser;
+        const photosId = window.location.href.split('/photo/')[1];
+        const response = await axios(`/api/boards/photo/${userId}/complain`, {
+            method: 'POST',
+            data: {
+                photosId
+            }
+        })
+        const options = 'width=400, height=500, left=0, top=400, resizable = yes'
+        if(response.data.success){
+            window.open(`/api/boards/photo/${photosId}/complain/popup`,"popup", options)
+        } else {
+            alert('이미 신고하신 게시물입니다.');
+        }
+    } catch(err) {
+        console.log(err);
+    }
+};
+
+function photoComplainInit() {
+    photoComplainBtn.addEventListener('click', photoComplain);
+}
 
 const increasePhotoNumber = () => { // 댓글 갯수를 추가 해주는 함수
     commentPhotoNumber.innerHTML = parseInt(commentPhotoNumber.innerHTML, 10) + 1;
@@ -188,4 +214,7 @@ function checkCookie() {
 if(addPhotoCommentForm){ // html 문서에 해당 페이지가 있다면 해당 파일 실행
     authenticationPhotoUser();
     checkCookie();
-};
+    if(photoComplainBtn){
+        photoComplainInit();
+    }
+}

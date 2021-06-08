@@ -19,6 +19,10 @@ block content
             .video__author
                 |Uploaded by 
                 a(href=routes.userDetail(video.creator.id))=video.creator.name
+            if loggedUser && loggedUser.id !== video.creator.id
+                #jsVideoComplain
+                    button(type="submit")
+                        i.fas.fa-thumbs-down 신고하기
         .video__comments
             if video.comments.length === 1
                 span.video__comment-number

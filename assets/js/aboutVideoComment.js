@@ -10,9 +10,33 @@ const commentVideoList = document.getElementById("jsCommentVideoList");
 const commentVideoNumber = document.getElementById("jsCommentVideoNumber");
 const deleteVideoCommentForms = document.querySelectorAll('.jsDeleteVideoComment');
 const updateVideoCommentForms = document.querySelectorAll('.jsUpdateVideoComment');
+const videoComplainBtn = document.getElementById('jsVideoComplain');
+
 
 let loggedUser;
 let loggedUserName;
+
+
+const videoComplain = async() => {
+    try {
+        const userId = loggedUser;
+        const videoId = window.location.href.split('/video/')[1];
+        const response = await axios(`/api/boards/video/${userId}/complain`, {
+            method: 'POST',
+            data: {
+                videoId
+            }
+        })
+        const options = 'width=400, height=500, left=0, top=400, resizable = yes'
+        if(response.data.success){
+            window.open(`/api/boards/video/${videoId}/complain/popup`,"popup", options)
+        } else {
+            alert('이미 신고하신 게시물입니다.');
+        }
+    } catch(err) {
+        console.log(err);
+    }
+};
 
 const increaseVideoNumber = () => {
     commentVideoNumber.innerHTML = parseInt(commentVideoNumber.innerHTML, 10) + 1;
@@ -154,6 +178,10 @@ function updateVideoInit() {
     };
 };
 
+function complainInit() {
+    videoComplainBtn.addEventListener('click', videoComplain);
+}
+
 const authenticationVideoUser = async() => {
     const url = window.location.href;
     try {
@@ -174,4 +202,11 @@ const authenticationVideoUser = async() => {
 
 if(addVideoCommentForm){
     authenticationVideoUser();
+    if(videoComplainBtn){
+        complainInit();
+    }
 }
+
+// if(videoComplainInput){
+//     handleComplain();
+// }

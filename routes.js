@@ -48,7 +48,7 @@ const API_EDIT_PROFILE = "/edit-profile";
 const API_CHANGE_PASSWORD = "/change-password";
 
 // API_BOARDS
-const API_BOARDS = "api/boards";
+const API_BOARDS = "/api/boards";
 
 const API_PHOTHS = "/photo";
 const API_PHOTO_UPLOAD = "/photo/upload";
@@ -71,6 +71,11 @@ const REGISTER_VIDEO_VIEW = "/video/:id/view";
 const ADD_COMMENT_VIDEO = "/:id/video/comment/add";
 const UPDATE_COMMENT_VIDEO = "/:id/video/comment/update";
 const DELETE_COMMENT_VIDEO = "/:id/video/comment/delete";
+
+const VIDEO_COMPLAIN =  '/video/:id/complain';
+const VIDEO_COMPLAIN_POPUP =  '/video/:id/complain/popup';
+const PHOTO_COMPLAIN =  '/photo/:id/complain';
+const PHOTO_COMPLAIN_POPUP =  '/photo/:id/complain/popup';
 
 const GOOGLE_MAP = "/:id/google-map";
 const HOSPITAL = "/:id/hospital"
@@ -164,6 +169,35 @@ const routes = {
     registerVideoView: REGISTER_VIDEO_VIEW,
     registerPhotoView: REGISTER_PHOTO_VIEW,
     addVideoComment: ADD_COMMENT_VIDEO,
+
+    videoComplain: id => {
+      if(id) {
+        return `/api/boards/video/${id}/complain`
+      } else {
+        return VIDEO_COMPLAIN;
+      }
+    },
+    photoComplain: id => {
+      if(id) {
+        return `/api/boards/photo/${id}/complain`
+      } else {
+        return PHOTO_COMPLAIN;
+      }
+    },
+    videoComplainPopup: id => {
+      if(id) {
+        return `/api/boards/video/${id}/complain/popup`
+      } else {
+        return VIDEO_COMPLAIN_POPUP
+      }
+    },
+    photoComplainPopup: id => {
+      if(id) {
+        return `/api/boards/photo/${id}/complain/popup`
+      } else {
+        return PHOTO_COMPLAIN_POPUP
+      }
+    },
     updateVideoComment: id => {
       if(id) {
         return `/api/${id}/video/comment/delete`
@@ -207,7 +241,7 @@ const routes = {
     apiUsers: API_USERS,
     apiUserDetail: id => {
         if (id) {
-          return `api/users/${id}`;
+          return `/api/users/${id}`;
         } else {
           return API_USER_DETAIL;
         }
@@ -224,21 +258,21 @@ const routes = {
     apiPhotoUpload: API_PHOTO_UPLOAD,
     apiPhotoDetail: id => {
       if (id) {
-        return `api/boards/photo/${id}`;
+        return `/api/boards/photo/${id}`;
       } else {
         return API_PHOTO_DETAIL;
       }
     },
     apiEditPhoto: id => { 
       if(id) {
-        return `api/boards/photo/${id}/edit`
+        return `/api/boards/photo/${id}/edit`
       } else {
         return API_EDIT_PHOTO;
       }
     },
     apiDeletePhoto: id => {
       if(id) {
-        return `api/boards/photo/${id}/delete`
+        return `/api/boards/photo/${id}/delete`
       } else {
         return API_DELETE_PHOTO
       }
@@ -248,21 +282,21 @@ const routes = {
     apiVideoUpload: API_VIDEO_UPLOAD,
     apiVideoDetail: id => {
       if (id) {
-        return `api/boards/video/${id}`;
+        return `/api/boards/video/${id}`;
       } else {
         return API_VIDEO_DETAIL;
       }
     },
     apiEditVideo: id => { 
       if(id) {
-        return `api/boards/video/${id}/edit`
+        return `/api/boards/video/${id}/edit`
       } else {
         return API_EDIT_VIDEO;
       }
     },
     apiDeleteVideo: id => {
       if(id) {
-        return `api/boards/video/${id}/delete`
+        return `/api/boards/video/${id}/delete`
       } else {
         return API_DELETE_VIDEO
       }

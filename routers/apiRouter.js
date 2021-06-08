@@ -27,4 +27,6 @@ apiRouter.post(routes.updatePhotoComment(), postUpdatePhotoComment);
 apiRouter.post(routes.deletePhotoComment(), postDeletePhotoComment);
 
 
+
+
 export default apiRouter;
