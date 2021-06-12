@@ -1,13 +1,11 @@
 import express from "express";
 import { home, search } from '../controllers/boardController';
-import { getJoin, postJoin, logout, getLogin, postLogin, getMe, getPython } from '../controllers/userController';
+import { getJoin, postJoin, logout, getLogin, postLogin, getMe } from '../controllers/userController';
 import { onlyPrivate, onlyPublic } from '../middleware';
 import routes from "../routes";
 
 
 const globalRouter = express.Router();
-
-globalRouter.get(routes.python, getPython); // get 방식으로 routes.pytion 요청이 오면 getPython 콜백 실행
 
 globalRouter
     .get(routes.join, onlyPublic, getJoin)

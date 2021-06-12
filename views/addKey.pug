@@ -1,0 +1,10 @@
+extends layouts/main
+
+block content
+    .form-container
+        form(action=`/users${routes.addKey}`, method="post")
+            input#jsCheckInput(type="text", placeholder="key", name="key")
+            button#jsCheckBtn(type="button", value=loggedUser)
+                i.fas.fa-fingerprint
+            input#jsFormInput(type="hidden", value="제품 등록하기")
+        a.form-container__link(href=`/users${routes.changePassword}`) Change Password 

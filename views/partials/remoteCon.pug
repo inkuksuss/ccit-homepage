@@ -1,0 +1,42 @@
+if loggedUser
+    section.section
+        input.user-device-keyList(type="hidden", value=loggedUser)
+        .remote__title
+            h1 리모컨
+        .remote__controller
+            h3 제품목록
+            .remote__list
+            .remote__btn
+                .remote__btn__one
+                    h4 1회주기
+                    button#sendOne(type="button") Go
+                .remote__btn__custom
+                    h4 예약
+                    .remote_btn__custom__moring
+                        h5 아침
+                        label 10g
+                        input(type="checkbox" value=10 name="amountmor" onclick="checkOnlyMon(this)")
+                        label 20g
+                        input(type="checkbox" value=20 name="amountmor" onclick="checkOnlyMon(this)")
+                        label 30g
+                        input(type="checkbox" value=30 name="amountmor" onclick="checkOnlyMon(this)")
+                        input#jsMoringTime(type="time" value=null)
+                    .remote_btn__custom__lunch
+                        h5 점심
+                        label 10g
+                        input(type="checkbox" value=10 name="amountlun" onclick="checkOnlyLun(this)")
+                        label 20g
+                        input(type="checkbox" value=20 name="amountlun" onclick="checkOnlyLun(this)")
+                        label 30g
+                        input(type="checkbox" value=30 name="amountlun" onclick="checkOnlyLun(this)")
+                        input#jsLunnchTime(type="time" value=null)
+                    .remote_btn__custom__dinner
+                        h5 저녁
+                        label 10g
+                        input(type="checkbox" value=10 name="amountdin" onclick="checkOnlyDin(this)")
+                        label 20g
+                        input(type="checkbox" value=20 name="amountdin" onclick="checkOnlyDin(this)")
+                        label 30g
+                        input(type="checkbox" value=30 name="amountdin" onclick="checkOnlyDin(this)")
+                        input#jsDinnerTime(type="time" value=null)
+                    button#sendOrder(type="button") Go

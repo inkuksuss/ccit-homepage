@@ -1,5 +1,5 @@
 import express from 'express';
-import { userDetail, getEditProfile, postEditProfile, getChangePassword, postChangePassword, userMqtt } from '../controllers/userController';
+import { userDetail, getEditProfile, postEditProfile, getChangePassword, postChangePassword } from '../controllers/userController';
 import { jwtOnlyPrivate, uploadAvatar } from '../middleware';
 import routes from '../routes';
 
@@ -15,7 +15,6 @@ apiUserRouter
 
 apiUserRouter.get(routes.userDetail(), userDetail);
 
-apiUserRouter.get(routes.mqtt(), jwtOnlyPrivate, userMqtt);
 
 export default apiUserRouter;
 

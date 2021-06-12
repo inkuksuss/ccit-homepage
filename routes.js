@@ -5,17 +5,15 @@ const LOGIN = "/login"; // 로그인
 const LOGOUT = "/logout"; // 로그아웃
 const SEARCH = "/search"; // 검색
 const ME = "/me"; // 내 정보
-const PYTHON = "/python" // (파이썬 관련 연습)
 
 // Users
 const USERS = "/users";
-const USER_DETAIL = "/:id"; // 유저 세부정보
+const ADD_KEY = "/addkey";
 const EDIT_PROFILE = "/edit-profile"; // 개인정보 수정
 const CHANGE_PASSWORD = "/change-password"; // 비밀번호 변경
-const MQTT = "/:id/mqtt"; // Mqtt관련
-const WATER = "/:id/water";
-const EAT = "/:id/eat";
-const CAM = "/:id/cam";
+const PRODUCT = "/my/product";
+const PRODUCT_DETAIL = "/product/:id";
+const USER_DETAIL = "/:id"; // 유저 세부정보
 
 // Boards
 const BOARDS = "/boards"; 
@@ -42,7 +40,7 @@ const API_SEARCH = "/search";
 const API_ME = "/me";
 
 // API_Users
-const API_USERS = "api/users";
+const API_USERS = "/api/users";
 const API_USER_DETAIL = "/:id";
 const API_EDIT_PROFILE = "/edit-profile";
 const API_CHANGE_PASSWORD = "/change-password";
@@ -77,8 +75,6 @@ const VIDEO_COMPLAIN_POPUP =  '/video/:id/complain/popup';
 const PHOTO_COMPLAIN =  '/photo/:id/complain';
 const PHOTO_COMPLAIN_POPUP =  '/photo/:id/complain/popup';
 
-const GOOGLE_MAP = "/:id/google-map";
-const HOSPITAL = "/:id/hospital"
 
 const routes = {
     //Global
@@ -87,10 +83,21 @@ const routes = {
     login: LOGIN,
     logout: LOGOUT,
     search: SEARCH,
-    python: PYTHON,
 
     //Users
     users: USERS,
+    editProfile: EDIT_PROFILE,
+    changePassword: CHANGE_PASSWORD,
+    addKey: ADD_KEY,
+    me: ME,
+    product: PRODUCT,
+    productDetail: id => {
+      if(id) {
+        return `/users/product/${id}`;
+      } else {
+        return PRODUCT_DETAIL;
+      }
+    },
     userDetail: id => {
         if (id) {
           return `/users/${id}`;
@@ -98,20 +105,7 @@ const routes = {
           return USER_DETAIL;
         }
     },
-
-    editProfile: EDIT_PROFILE,
-    changePassword: CHANGE_PASSWORD,
-    me: ME,
-    mqtt: id => {
-      if(id) {
-        return `/users/${id}/mqtt`;
-      } else {
-        return MQTT;
-      }
-    },
-    water: WATER,
-    eat: EAT,
-    cam: CAM,
+    
 
     //Boards
     boards: BOARDS,
@@ -227,8 +221,6 @@ const routes = {
         return DELETE_COMMENT_PHOTO
       }
     },
-    googleMap: GOOGLE_MAP,
-    hospital: HOSPITAL,
 
     //Global API
     apiHome: API_HOME,

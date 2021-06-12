@@ -1,22 +1,28 @@
+/* eslint-disable no-unused-expressions */
+/* eslint-disable no-restricted-syntax */
 /* eslint-disable object-shorthand */
 import passport from "passport";
 import { PythonShell } from "python-shell";
+import Mongoose from "mongoose";
 import routes from "../routes";
 import User from "../models/User";
+import Product from "../models/Product";
+import Food from "../models/Food";
+import Weight from "../models/Weight";
 
-const options = { // pythonShell을 통해 CGI와 데이터를 주고 받기 위한 옵션
-    scriptPath: './.venv',
-    pythonPath: 'python3',
-    pythonOptins: ['-u'],
-    args: []
-}
+const scriptPath = '/Users/gim-ingug/Documents/ccit-homepage/.venv'
 
-export const getPython = (req, res) => {
-    PythonShell.run('mongo.py', options, (err, results) => { // mongo.py로 부터 데이터를 받아옴
-        if(err) console.log(err);
-        res.send(results);
-    })
-};
+const { Types: { ObjectId } } = Mongoose
+
+const korea = new Date(); 
+const year = korea.getFullYear();
+const month = korea.getMonth();
+const lastMon = korea.getMonth() - 1;
+const date = korea.getDate()+1; // 수정
+const today = new Date(Date.UTC(year, month, date));
+const lastMonth = new Date(Date.UTC(year, lastMon, date));
+
+
 
 // Global
 export const getJoin = (req, res) => { // get방식으로 join 페이지를 랜더링함
@@ -83,6 +89,10 @@ export const getMe =  async (req, res) => {
 };
 
 // Users
+export const getProduct = (req, res) => {
+    res.render("product", {pageTitle: "기기 정보"});
+}
+
 export const userDetail = async (req, res) => {
     const {
         params: { id } // url에서 유저 Id값 가져오기
@@ -150,5 +160,115 @@ export const postChangePassword =  async (req,res) => {
     }
 };
 
-export const userMqtt = (req, res) => {
-    res.render("socket", { pageTitle: "Socket"})};
+export const getAddKey = (req, res) => {
+    res.render("addKey", {pageTitle: "제품등록"});
+}
+
+export const postAddKey = async(req, res) => {
+    const {
+         user: { id },
+         body: { key }
+    } = req;
+    console.log(key)
+    try {
+        const product = await Product.findOne({ key });
+        console.log(product)
+        if(!product) {
+            await User.findByIdAndUpdate(id, { $push: { key } });
+            const newProduct = await Product.create({
+                key,
+                controller: id
+            })
+            newProduct.save()
+            const productId = await Product.findOne({ key });
+            await User.findByIdAndUpdate(id, { $push: { product: productId.id }});
+            req.flash('success', '등록 완료'); // 알림
+            res.redirect(routes.me);
+        } else {
+            req.flash('error', '이미 등록된 제품입니다.');
+            res.redirect(`/users${routes.addKey}`);
+        }
+    } catch(err) {
+        console.log(err);
+    }
+};
+
+export const getProductDetail = async(req, res) => {
+    const {
+        params: { id }
+    } = req;
+    try {
+        const foods = await Food.aggregate([
+            { $match: { $and: [{ product: new ObjectId(id) }, { time: { $gte: lastMonth, $lt: today }}] }},
+            {
+                $group: {
+                    "_id": { "$week": "$time"},
+                    avgFoodValue: { $avg: "$amount" },
+                    avgRestValue: { $avg: "$rest" }
+                }
+            },
+            { $sort: { _id: 1 }}
+        ]);
+        console.log(foods);
+        const weights = await Weight.aggregate([
+            { $match: { $and: [{ product: new ObjectId(id) }, { time: { $gte: lastMonth, $lt: today }}] }},
+            {
+                $group: {
+                    "_id": { "$week": {"$toDate": "$time"} },
+                    avgWeightValue: { $avg: "$weg" }
+                }
+            },
+            { $sort: { _id: 1 }}
+        ]);
+        console.log(weights);
+        const dateBox = [];
+        const FoodBox = [];
+        const RestBox = [];
+        const WeightBox = [];
+        for(const food of foods) {
+            const startYear = new Date(Date.UTC(year, 0, 1));
+            const neededDate = new Date(startYear.setDate(startYear.getDate() + (food._id * 7)))
+            const neededYear = neededDate.getFullYear();
+            const neededMonth = neededDate.getMonth() + 1;
+            const neededDay = neededDate.getDate();
+            const needDate = `${neededYear}-${neededMonth < 10 ? `0${neededMonth}` : `${neededMonth}`}-${neededDay < 10 ? `0${neededDay}` : `${neededDay}`}`
+            dateBox.push(needDate);
+            FoodBox.push(food.avgFoodValue !== null ? food.avgFoodValue : 0);
+            RestBox.push(food.avgRestValue !== null ? food.avgRestValue : 0)
+        }
+        for(const weight of weights) {
+            const startYear = new Date(Date.UTC(year, 0, 1));
+            const neededDate = new Date(startYear.setDate(startYear.getDate() + (weight._id * 7)))
+            const neededYear = neededDate.getFullYear();
+            const neededMonth = neededDate.getMonth() + 1;
+            const neededDay = neededDate.getDate();
+            const needDate = `${neededYear}-${neededMonth < 10 ? `0${neededMonth}` : `${neededMonth}`}-${neededDay < 10 ? `0${neededDay}` : `${neededDay}`}`
+        }
+        res.render('productDetail', { pageTitle: "내 기기" , FoodBox, RestBox, weights, dateBox, id })
+    } catch(err) {
+        console.log(err)
+    }
+
+};
+
+export const postProductDetail = (req, res) => {
+    const {
+        params: { id },
+        body: { 
+            data
+        }
+    } = req;
+    console.log(data.start);
+    console.log(data.end);
+    PythonShell.run('ChartPage.py', {
+        mode: 'text',
+        pythonOptions: ['-u'],
+        scriptPath,
+        args: [id, data.start, data.end]
+    }, (err, result) => {
+        if(err) {
+            return console.log(err);
+        }
+        console.log(result);
+    })
+};

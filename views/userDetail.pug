@@ -6,7 +6,8 @@ block content
     .user-profile
         if (user.avatar !== "basicimg")
             .user-profile__header    
-                img.u-avatar(src=`${user.avatar}`)
+                img.u-avatar(src=`/${user.avatar}`)
+                span=user.avatar
                 h4.profile__username=user.name
         else
             .user-profile__header    
@@ -19,6 +20,10 @@ block content
                     button ✏️ 개인정보 수정
                 a(href=`/users${routes.changePassword}`)
                     button 🔒 비밀번호 변경 
+                a(href=`/users${routes.addKey}`)
+                    button 🎮 제품 등록
+            .user-device-list
+                input.user-device-key(type="hidden", value=loggedUser)
     .home-videos
             each item in user.videos 
                 +videoBlock({

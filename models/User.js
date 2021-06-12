@@ -31,8 +31,13 @@ const UserSchema = new mongoose.Schema({
     ], 
     key: [ // 제품 Product 스키마와 연동
         {
-            type: mongoose.Schema.Types.ObjectId, 
-            ref: 'DHT11'
+            type: String
+        }
+    ],
+    product: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Product'
         }
     ],
     complain: [

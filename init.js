@@ -1,13 +1,16 @@
+/* eslint-disable no-restricted-syntax */
+/* eslint-disable object-shorthand */
 import dotenv from 'dotenv';
 import socketIO from "socket.io";
 import mqtt from "mqtt";
 import "./db";
 import app from './app';
-import DHT11 from "./models/DHT11";
 import "./models/Comment";
-import "./models/User";
 import "./models/Video";
 import "./models/Photo";
+import User from "./models/User";
+import Product from "./models/Product";
+import Food from "./models/Food";
 
 // const obj = JSON.parse(message);
 // const date = new Date();
@@ -29,33 +32,47 @@ console.log(`😈Listening on: http://localhost:${PORT}`);
 // 웹서버
 const server = app.listen(PORT, handleListing);
 
-// Mqtt 서버
-// const client = mqtt.connect("mqtt://127.0.0.1");
+const options = {
+    port: 1883,
+    username: 'inguk',
+    password: 'ccit2',
+    clientId: '123'
+};
 
-// client.on("connect", () => {
-//     console.log("😇Mqtt Connect");
-//     client.subscribe('jb/shilmu/scle/smenco/apsr/+/input/+'); // 읽을 토픽
-// });
+//Mqtt 서버
+const client = mqtt.connect("mqtt://114.71.241.151", options);
 
-// client.on("message", (topic, message) => {
-//     const contaienr = topic.split('/')
-//     if(contaienr[5])
-//     console.log(contaienr);
-//     timeConvertor(message);
-//     const dht11 = new DHT11({
-//         tmp: obj.tmp,
-//         hum: obj.hum,
-//         createdAt: obj.createdAt,
-//         key: obj.key
-//     });
-//     console.log(dht11);
-//     try{
-//         dht11.save();
-//         console.log('Success MQTT');
-//     } catch (err) {
-//         console.log({ message: err });
-//     }
-// })
+client.on("connect", () => {
+    console.log("😇Mqtt Connect");
+    client.subscribe('jb/ccit/dogbab/smit/petoy/+/cb');
+    client.subscribe('jb/ccit/dogbab/smit/petoy/+/+/output/stepmt/+/cb'); 
+    client.subscribe('jb/ccit/dogbab/smit/petoy/+/+/input/+'); 
+});
+
+client.on("message", async (topic, message) => {
+    const obj = JSON.parse(message);
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = date.getMonth();
+    const today = date.getDate();
+    const hours = date.getHours();
+    const mintues = date.getMinutes();
+    const seconds = date.getSeconds();
+    const contaienr = topic.split('/')
+    obj.createdAt = new Date(Date.UTC(year, month, today, hours, mintues, seconds));
+    try{
+        if(contaienr.length === 6 && contaienr[6] === "cb") {
+            const { success, serNum, userId } = obj;
+            if(success) {
+                await User.findByIdAndUpdate(userId, {$push: { key: serNum }});
+            }
+            
+
+        }
+    } catch (err) {
+        console.log({ message: err });
+    }
+});
 
 // 웹소켓서버
 const io = socketIO(server);
@@ -73,10 +90,145 @@ io.on("connection", socket => {
         socket.nickname = nickname;
     });
     // Mqtt 데이터
-    socket.on("mqttSubmit", () => {
-        DHT11.find({}).sort({ _id: -1 }).limit(1).then(res => {
-            socket.emit("mqttSubmit", JSON.stringify(res[0]))
-        })
+    // socket.on("mqttSubmit", () => {
+    //     DHT.find({}).sort({ _id: -1 }).limit(1).then(res => {
+    //         socket.emit("mqttSubmit", JSON.stringify(res[0]))
+    //     })
+    // })
+
+    socket.on("deviceAuth", (key) => {
+        key.order = 1;
+        const jsonKey = JSON.stringify(key)
+        const authTopic = `jb/ccit/dogbab/smit/petoy/${key.key}`
+        console.log(jsonKey)
+        client.publish(authTopic, jsonKey, err => {
+            if(err) {
+                return console.log(err);
+            }
+            client.on("message", async (topic, message) => {
+                const container = topic.split('/');
+                try{
+                    if(container.length === 7 && container[5] === key.key && container[6] === "cb") {
+                        const result = JSON.parse(message);
+                        const { success, serNum } = result;
+                        console.log(success, serNum)
+                        if(success) {
+                            console.log('ji')
+                            const exist = await Product.findOne({ key: serNum })
+                            if(!exist) {
+                                return socket.emit("deviceRegister", true);
+                            } else {
+                                return socket.emit("deviceRegister", false);
+                            }
+                        } else {
+                            return socket.emit("deviceRegister", false);
+                        }
+                    }
+                } catch (error) {
+                    console.log( error );
+                }
+            })
+        });
+    });
+    socket.on("sendControl", async(order) => {
+        if(order) {
+        const { keyName, userId, time, amount } = order;
+        const sending = {
+            time,
+            amount,
+            order: 3
+        }
+        const jsSending = JSON.stringify(sending);
+            client.publish(`jb/ccit/dogbab/smit/petoy/${userId}/${keyName}/stepmt/ad`, jsSending, async(err) => {
+                if(err) {
+                    return console.log(err);
+                }
+                client.on("message", async(topic, message) => {
+                    const container = topic.split('/');
+                    if(container[5] === userId && container[6] === keyName && container[7] === "stepmt" && container[8] === "ad" && container[9] === "cb") {
+                        const result = JSON.parse(message);
+                        const { success, time: { timeArray } } = result;
+                        if(success) {
+                            try {
+                                const product = await Product.findOne({ key: keyName });
+                                for await(const times of timeArray) {
+                                    const data = await Food.create({
+                                        controller: userId,
+                                        product,
+                                        time: times,
+                                        amount
+                                    })
+                                    data.save();
+                                }
+                                setTimeout(() => {
+                                    socket.on('sendControlCb', true);
+                                }, 1000);
+                            } catch(error) {
+                                setTimeout(() => {
+                                    socket.on('sendControlCb', false);
+                                }, 1000);
+                                console.log(error);
+                            }
+                        }; 
+                    }
+                })
+            });
+        }
+    });
+    socket.on("sendOneControl", (order) => {
+        if(order) {
+        const { keyName, userId, amount } = order;
+        const sending = {
+            amount,
+            order: 2
+        }
+        const jsSending = JSON.stringify(sending);
+        console.log(`jb/ccit/dogbab/smit/petoy/${userId}/${keyName}/output/stepmt/now`);
+            client.publish(`jb/ccit/dogbab/smit/petoy/${userId}/${keyName}/output/stepmt/now`, jsSending, err => {
+                if(err) {
+                    return console.log(err);
+                }
+                client.on("message", async(topic, message) => {
+                    if(topic === `jb/ccit/dogbab/smit/petoy/${userId}/${keyName}/output/stepmt/now/cb`) {
+                        const result = JSON.parse(message.toString());
+                        console.log(result);
+                        const { success, time } = result;
+                        const receiveDate = time.split(' ')[0]
+                        const receiveTime = time.split(' ')[1]
+                        const nowDate = receiveDate.split("-");
+                        const nowTime = receiveTime.split(":");
+                        console.log(nowDate)
+                        console.log(nowTime)
+                        console.log(Number(nowTime[0]))
+                        const date = new Date(Date.UTC(
+                            Number(nowDate[0]), Number(nowDate[1]) - 1, Number(nowDate[2]),
+                            Number(nowTime[0]), Number(nowTime[1]), Number(nowTime[2]),          
+                        ));
+                        console.log(date);
+                        if(success) {
+                            try {
+                                const product = await Product.findOne({ key: keyName });
+                                const data = await Food.create({
+                                    controller: userId,
+                                    product,
+                                    date,
+                                    amount
+                                });
+                                data.save();
+                                setTimeout(() => {
+                                    socket.emit('sendOneControlCb', true);
+                                }, 1500);
+                            } catch(error) {
+                                setTimeout(() => {
+                                    socket.emit('sendOneControlCb', false);
+                                }, 1500);
+                                console.log(error);
+                            }
+                        }; 
+                    }
+                })
+            });
+        }
     })
 });
 

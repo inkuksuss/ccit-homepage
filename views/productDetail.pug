@@ -1,0 +1,16 @@
+extends layouts/main
+
+block content
+    .productDetail
+    if loggedUser
+        input#jsDateBox(type="hidden", value=dateBox)
+        input#jsFoods(type="hidden", value=FoodBox)
+        input#jsRests(type="hidden", value=RestBox)
+        input#jsWeights(type="hidden", value=weights)
+        p 조회기간:
+            input(type="text" id="datepicker1") 
+            span ~
+            input(type="text" id="datepicker2")
+            input#jsDateSend(type="submit" value="조회")
+        
+        canvas(id="myChart" width="400px" height="400px")    

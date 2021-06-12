@@ -1,5 +1,6 @@
 /* eslint-disable object-shorthand */
 /* eslint-disable no-restricted-syntax */
+import fs from "fs";
 import Video from "../models/Video";
 import Photo from "../models/Photo";
 import User from "../models/User"
@@ -33,10 +34,24 @@ export const search = async(req, res) => {
 // Photo
 export const apiPhotos = async(req, res) => {
     try{
-        const photoList = await Photo.find({}).sort({ _id: -1 });
+        const photoInfo = await Photo.find({}).sort({ _id: -1 });
+        const photoId = [];
+        const photoList = [];
+        let bitmap;
+        let buff;
+
+        for(const info of photoInfo) {
+            photoId.push(info.photoUrl);
+        }
+        for(const id of photoId) {
+            bitmap = fs.readFileSync(`./${id}`);
+            buff = Buffer.from(bitmap);
+            photoList.push(buff.toString('base64'));
+        }
         res.json({
             success: true,
-            data: photoList
+            photoInfo,
+            photoList
         });
     } catch(err) {
         throw Error();

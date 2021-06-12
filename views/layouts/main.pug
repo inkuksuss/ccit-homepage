@@ -7,8 +7,11 @@ html
         link(rel="shortcut icon" href="#")
         link(rel="stylesheet", href="/static/styles.css")
         link(href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css", rel="stylesheet")
+        link(rel="stylesheet" href="//code.jquery.com/ui/1.8.18/themes/base/jquery-ui.css")
         title #{pageTitle} | #{siteName}
     body
+        if loggedUser
+            input#jsUserInfo(type="hidden", value=loggedUser)
         if messages.error
             +message({
                 type:'error',
@@ -25,16 +28,80 @@ html
                 text:messages.success
             })
         include ../partials/header
+        include ../partials/remoteCon
         main
             block content
         include ../partials/footer
         script(src="/socket.io/socket.io.js")
         script(src="/static/main.js") // 여기 없으면 안돼용~
+        script(src="https://cdn.jsdelivr.net/npm/chart.js")
+        script(src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js")
+        script(src="//code.jquery.com/ui/1.8.18/jquery-ui.min.js") 
         script.
             const socket = io('/');
             const socketContainer = document.getElementById("jsSocketContainer");
-            let timer = null;
+            const checkBtn = document.getElementById("jsCheckBtn");
+            const checkInput = document.getElementById("jsCheckInput");
+            const formInput = document.getElementById("jsFormInput");
+            const morCheckBox = document.getElementsByName("amountmor");
+            const lunCheckBox = document.getElementsByName("amountlun");
+            const dinCheckBox = document.getElementsByName("amountdin");
+            const morTime = document.getElementById("jsMoringTime");
+            const lunTime = document.getElementById("jsLunnchTime");
+            const dinTime = document.getElementById("jsDinnerTime");
+            const sendOrder = document.getElementById("sendOrder");
+            const sendOne = document.getElementById('sendOne');
+            const user = document.querySelector('.user-device-keyList');
+            const jsDateBox = document.getElementById('jsDateBox');
+            const jsFoods = document.getElementById('jsFoods');
+            const jsRests = document.getElementById('jsRests');
+            const jsWeights = document.getElementById('jsWeights');
+            
+            $.datepicker.setDefaults({
+                dateFormat: 'yy-mm-dd',
+                prevText: '이전 달',
+                nextText: '다음 달',
+                monthNames: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
+                monthNamesShort: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
+                dayNames: ['일', '월', '화', '수', '목', '금', '토'],
+                dayNamesShort: ['일', '월', '화', '수', '목', '금', '토'],
+                dayNamesMin: ['일', '월', '화', '수', '목', '금', '토'],
+                showMonthAfterYear: true,
+                yearSuffix: '년'
+            });
 
+            $(function() {
+                $("#datepicker1, #datepicker2").datepicker();
+            });
+
+            let timer = null;
+            let moring;
+            let lunnch;
+            let dinner;
+
+            function checkOnlyMon(one) {
+                morCheckBox.forEach((mor) => {
+                    mor.checked = false;
+                })
+                one.checked = true;
+                moring = one.value;
+            }
+
+            function checkOnlyLun(one) {
+                lunCheckBox.forEach((lun) => {
+                    lun.checked = false;
+                })
+                one.checked = true;
+                lunnch = one.value;
+            }
+
+            function checkOnlyDin(one) {
+                dinCheckBox.forEach((din) => {
+                    din.checked = false;
+                })
+                one.checked = true;
+                dinner = one.value;
+            }
 
             function sendMessage(message) {
                 socket.emit("newMessage", { message });
@@ -66,6 +133,136 @@ html
                 }
 
             }
+
+            const checkDevice = () => {
+                const userInfo = JSON.parse(checkBtn.value);                
+                const value = {
+                    "key": checkInput.value,
+                    "userId": userInfo._id
+                };
+                socket.emit('deviceAuth', value);
+                socket.on('deviceRegister', res => {
+                    if(res === true) {
+                        formInput.setAttribute('type', 'submit');
+                    } else {
+                        alert('존재하지 않는 제품이거나 등록된 제품입니다.')
+                    } 
+                })
+            }
+
+            function deviceInit() {
+                checkBtn.addEventListener('click', checkDevice)
+            }
+
+            if(checkBtn) {
+                console.log('d')
+                deviceInit();
+            }
+
+            const sendData = () => {
+                if (sendOrder.value && moring && lunnch && dinner && morTime.value && lunTime.value && dinTime.value) {
+                    const userData = JSON.parse(user.value);
+                    const order = {
+                        "time": [
+                            morTime.value,
+                            lunTime.value,
+                            dinTime.value,
+                        ],
+                        "amount": [
+                            moring,
+                            lunnch,
+                            dinner
+                        ],
+                        keyName: sendOrder.value,
+                        "userId": userData._id
+                    };
+                    socket.emit('sendControl', order);
+                    alert('전송완료');
+                    setTimeout(() => {
+                        socket.on('sendControlCb', result => {
+                            if(result) {
+                                alert('예약이 완료하였습니다.');
+                            } else {
+                                alert('예약 실패하였습니다.');
+                            }
+                        })
+                    }, 1000);
+                    set
+                } else if(!sendOrder.value && moring && lunnch && dinner && morTime.value && lunTime.value && dinTime.value){
+                    alert('제품을 선택해주세요');
+                } else {
+                    alert('모든 정보를 입력해주세요');
+                }
+            }
+
+            function sendInit() {
+                sendOrder.addEventListener('click', sendData);
+            }
+
+            if(sendOrder) {
+                sendInit();
+            }
+            
+            const sendOneData = () => {
+                if(sendOne.value) {
+                    const userData = JSON.parse(user.value);
+                    const order = {
+                        "amount": 10,
+                        keyName: sendOne.value,
+                        "userId": userData._id
+                    };
+                    socket.emit('sendOneControl', order);
+                    alert('전송완료')
+                    socket.on('sendOneControlCb', result => {
+                        console.log('1')
+                        if(result) {
+                            console.log('2')
+                            alert('배식 완료하였습니다.');
+                        } else {
+                            console.log('3')
+                            alert('배식 실패하였습니다.');
+                        }
+                    })
+                } else {
+                    alert('제품을 선택해주세요');
+                }
+            };
+
+            function oneInit() {
+                sendOne.addEventListener('click', sendOneData)
+            };
+
+            if(sendOne) {
+                oneInit();
+            };
+
+            if(jsDateBox) {
+                const ctx = document.getElementById('myChart');
+                const FoodData = JSON.parse(jsFoods.value);
+                const RestData = JSON.parse(jsRests.value);
+                const dateData = JSON.parse(jsDateBox.value);
+                console.log(FoodData);
+                console.log(RestData);
+
+                const myChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: dateData,
+                        datasets: [{
+                            label: '지급량',
+                            data: FoodData,
+                            borderColor: 'rgb(255, 99, 132)',
+                            backgroundColor: 'rgba(255, 99, 132, 0.2)'
+                        }, {
+                            label: '잔량',
+                            data: RestData,
+                            borderColor: 'rgb(120, 159, 132)',
+                            backgroundColor: 'rgba(225, 129, 172, 0.2)'
+                        }]
+                    },
+                });
+            }
+        
 
 
 
