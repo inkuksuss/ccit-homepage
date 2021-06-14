@@ -209,7 +209,6 @@ export const getProductDetail = async(req, res) => {
             },
             { $sort: { _id: 1 }}
         ]);
-        console.log(foods);
         const weights = await Weight.aggregate([
             { $match: { $and: [{ product: new ObjectId(id) }, { time: { $gte: lastMonth, $lt: today }}] }},
             {
@@ -220,11 +219,11 @@ export const getProductDetail = async(req, res) => {
             },
             { $sort: { _id: 1 }}
         ]);
-        console.log(weights);
         const dateBox = [];
         const FoodBox = [];
         const RestBox = [];
         const WeightBox = [];
+        const WeightDateBox = [];
         for(const food of foods) {
             const startYear = new Date(Date.UTC(year, 0, 1));
             const neededDate = new Date(startYear.setDate(startYear.getDate() + (food._id * 7)))
@@ -243,8 +242,10 @@ export const getProductDetail = async(req, res) => {
             const neededMonth = neededDate.getMonth() + 1;
             const neededDay = neededDate.getDate();
             const needDate = `${neededYear}-${neededMonth < 10 ? `0${neededMonth}` : `${neededMonth}`}-${neededDay < 10 ? `0${neededDay}` : `${neededDay}`}`
+            WeightDateBox.push(needDate);
+            WeightBox.push(weight.avgWeightValue !== null ? weight.avgWeightValue : 0);
         }
-        res.render('productDetail', { pageTitle: "내 기기" , FoodBox, RestBox, weights, dateBox, id })
+        res.render('productDetail', { pageTitle: "내 기기" , FoodBox, RestBox, dateBox, id, WeightBox, WeightDateBox })
     } catch(err) {
         console.log(err)
     }
@@ -258,10 +259,8 @@ export const postProductDetail = (req, res) => {
             data
         }
     } = req;
-    console.log(data.start);
-    console.log(data.end);
     PythonShell.run('ChartPage.py', {
-        mode: 'text',
+        mode: 'json',
         pythonOptions: ['-u'],
         scriptPath,
         args: [id, data.start, data.end]
@@ -269,6 +268,26 @@ export const postProductDetail = (req, res) => {
         if(err) {
             return console.log(err);
         }
-        console.log(result);
+        const dateBox = result[0]
+        const dataList = result[1]
+        console.log(dataList.amount);
+        console.log(dataList.rest)
+        if(data !== [] && dataList !== {}) {
+            console.log(dataList);
+            return res.json({
+                success: true,
+                dateBox,
+                amount: dataList.amount,
+                rest: dataList.rest,
+                weight: dataList.weight
+            })
+        } 
+        res.json({
+            success: false,
+            dateBox: [],
+            amount: [],
+            rest: [],
+            weight: []
+        })
     })
 };

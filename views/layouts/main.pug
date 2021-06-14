@@ -9,7 +9,7 @@ html
         link(href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css", rel="stylesheet")
         link(rel="stylesheet" href="//code.jquery.com/ui/1.8.18/themes/base/jquery-ui.css")
         title #{pageTitle} | #{siteName}
-    body
+    body(Onload="onloadInit()")
         if loggedUser
             input#jsUserInfo(type="hidden", value=loggedUser)
         if messages.error
@@ -56,6 +56,13 @@ html
             const jsFoods = document.getElementById('jsFoods');
             const jsRests = document.getElementById('jsRests');
             const jsWeights = document.getElementById('jsWeights');
+            const jsWeightsDateBox = document.getElementById('jsWeightsDateBox');
+            const jsNewDataChartBox = document.getElementById('jsNewDataChartBox');
+            const postDateBox = document.querySelector('.jsDateBox');
+            const postAmount = document.querySelector('.jsAmount');
+            const postRest = document.querySelector('.jsRest');
+            const postWeight = document.querySelector('.jsWeight');
+            console.log(postDateBox)
             
             $.datepicker.setDefaults({
                 dateFormat: 'yy-mm-dd',
@@ -155,7 +162,6 @@ html
             }
 
             if(checkBtn) {
-                console.log('d')
                 deviceInit();
             }
 
@@ -187,7 +193,6 @@ html
                             }
                         })
                     }, 1000);
-                    set
                 } else if(!sendOrder.value && moring && lunnch && dinner && morTime.value && lunTime.value && dinTime.value){
                     alert('제품을 선택해주세요');
                 } else {
@@ -236,15 +241,16 @@ html
                 oneInit();
             };
 
-            if(jsDateBox) {
-                const ctx = document.getElementById('myChart');
+            if(jsDateBox && jsWeightsDateBox) {
+                const foodCtx = document.getElementById('myChart').getContext('2d');;
+                const weightCtx = document.getElementById('myWeight').getContext('2d');;
                 const FoodData = JSON.parse(jsFoods.value);
                 const RestData = JSON.parse(jsRests.value);
                 const dateData = JSON.parse(jsDateBox.value);
-                console.log(FoodData);
-                console.log(RestData);
+                const WeightData = JSON.parse(jsWeights.value);
+                const WeightDate = JSON.parse(jsWeightsDateBox.value);
 
-                const myChart = new Chart(ctx, {
+                const myChart = new Chart(foodCtx, {
                     type: 'line',
                     data: {
                         labels: dateData,
@@ -252,18 +258,40 @@ html
                             label: '지급량',
                             data: FoodData,
                             borderColor: 'rgb(255, 99, 132)',
-                            backgroundColor: 'rgba(255, 99, 132, 0.2)'
+                            backgroundColor: 'rgba(255, 99, 132, 0.2)',
                         }, {
                             label: '잔량',
                             data: RestData,
                             borderColor: 'rgb(120, 159, 132)',
                             backgroundColor: 'rgba(225, 129, 172, 0.2)'
+                        }],
+                    },
+                    options: {
+                        responsive: false
+                    }
+                });
+
+                const myWeight = new Chart(weightCtx, {
+                    type: 'line',
+                    data: {
+                        labels: WeightDate,
+                        datasets: [{
+                            label: '몸무게',
+                            data: WeightData,
+                            borderColor: 'rgb(255, 99, 132)',
+                            backgroundColor: 'rgba(255, 99, 132, 0.2)'
                         }]
                     },
+                    options: {
+                        responsive: false
+                    }
                 });
+                function onloadInit(){
+                    jsNewDataChartBox.style.display = "none"
+                }
             }
         
-
+        
 
 
 

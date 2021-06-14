@@ -113,7 +113,6 @@ io.on("connection", socket => {
                         const { success, serNum } = result;
                         console.log(success, serNum)
                         if(success) {
-                            console.log('ji')
                             const exist = await Product.findOne({ key: serNum })
                             if(!exist) {
                                 return socket.emit("deviceRegister", true);
@@ -136,27 +135,40 @@ io.on("connection", socket => {
         const sending = {
             time,
             amount,
-            order: 3
+            order: 3,
+            userId
         }
+        console.log(sending);
+        console.log(`jb/ccit/dogbab/smit/petoy/${userId}/${keyName}/stepmt/ad`);
         const jsSending = JSON.stringify(sending);
             client.publish(`jb/ccit/dogbab/smit/petoy/${userId}/${keyName}/stepmt/ad`, jsSending, async(err) => {
                 if(err) {
                     return console.log(err);
                 }
+                console.log(jsSending)
                 client.on("message", async(topic, message) => {
-                    const container = topic.split('/');
-                    if(container[5] === userId && container[6] === keyName && container[7] === "stepmt" && container[8] === "ad" && container[9] === "cb") {
+                    console.log('asdasd')
+                    if(topic === `jb/ccit/dogbab/smit/petoy/${userId}/${keyName}/stepmt/ad`) {
                         const result = JSON.parse(message);
+                        console.log(result)
                         const { success, time: { timeArray } } = result;
                         if(success) {
                             try {
                                 const product = await Product.findOne({ key: keyName });
                                 for await(const times of timeArray) {
+                                    const receiveDate = times.split(' ')[0]
+                                    const receiveTime = times.split(' ')[1]
+                                    const nowDate = receiveDate.split("-");
+                                    const nowTime = receiveTime.split(":");
+                                    const date = new Date(Date.UTC(
+                                        Number(nowDate[0]), Number(nowDate[1]) - 1, Number(nowDate[2]),
+                                        Number(nowTime[0]), Number(nowTime[1]), Number(nowTime[2]),          
+                                    ));
                                     const data = await Food.create({
                                         controller: userId,
                                         product,
-                                        time: times,
-                                        amount
+                                        time: date,
+                                        amount: Math.round(amount)
                                     })
                                     data.save();
                                 }
@@ -180,40 +192,40 @@ io.on("connection", socket => {
         const { keyName, userId, amount } = order;
         const sending = {
             amount,
-            order: 2
+            order: 2,
+            userId
         }
         const jsSending = JSON.stringify(sending);
+        console.log(jsSending)
         console.log(`jb/ccit/dogbab/smit/petoy/${userId}/${keyName}/output/stepmt/now`);
             client.publish(`jb/ccit/dogbab/smit/petoy/${userId}/${keyName}/output/stepmt/now`, jsSending, err => {
                 if(err) {
                     return console.log(err);
                 }
                 client.on("message", async(topic, message) => {
+                    const result = JSON.parse(message.toString());
+                    console.log(result);
                     if(topic === `jb/ccit/dogbab/smit/petoy/${userId}/${keyName}/output/stepmt/now/cb`) {
-                        const result = JSON.parse(message.toString());
-                        console.log(result);
                         const { success, time } = result;
                         const receiveDate = time.split(' ')[0]
                         const receiveTime = time.split(' ')[1]
                         const nowDate = receiveDate.split("-");
                         const nowTime = receiveTime.split(":");
-                        console.log(nowDate)
-                        console.log(nowTime)
-                        console.log(Number(nowTime[0]))
                         const date = new Date(Date.UTC(
                             Number(nowDate[0]), Number(nowDate[1]) - 1, Number(nowDate[2]),
                             Number(nowTime[0]), Number(nowTime[1]), Number(nowTime[2]),          
                         ));
-                        console.log(date);
+                        console.log(date)
                         if(success) {
                             try {
                                 const product = await Product.findOne({ key: keyName });
                                 const data = await Food.create({
                                     controller: userId,
                                     product,
-                                    date,
-                                    amount
+                                    time: date,
+                                    amount: Math.round(amount)
                                 });
+                                console.log(data);
                                 data.save();
                                 setTimeout(() => {
                                     socket.emit('sendOneControlCb', true);
@@ -225,7 +237,28 @@ io.on("connection", socket => {
                                 console.log(error);
                             }
                         }; 
-                    }
+                    } else if(topic === `jb/ccit/dogbab/smit/petoy/${userId}/${keyName}/input/smalllod`) {
+                        const { success, time } = result;
+                        const receiveDate = time.split(' ')[0]
+                        const receiveTime = time.split(' ')[1]
+                        const nowDate = receiveDate.split("-");
+                        const nowTime = receiveTime.split(":");
+                        const date = new Date(Date.UTC(
+                            Number(nowDate[0]), Number(nowDate[1]) - 1, Number(nowDate[2]),
+                            Number(nowTime[0]), Number(nowTime[1]), Number(nowTime[2]),          
+                        ));
+                        if(success) {
+                            const topicKey = topic.split('/')[6];
+                            console.log(topicKey)
+                            try {
+                                const product = await Product.findOne({ key: topicKey });
+                                await Food.findOneAndUpdate({ product, time: date }, { rest: Math.round(result.rest) });
+                                return console.log(result.rest)
+                            } catch(error) {
+                                console.log(error)
+                            }
+                        } 
+                    } 
                 })
             });
         }
