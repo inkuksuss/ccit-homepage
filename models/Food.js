@@ -16,11 +16,15 @@ const FoodSchema = new mongoose.Schema({
         default: Date.now,
     },
     amount: {
-        type:Number,
-        required: true
+        type: Number,
+        required: 0
     },
     rest: {
-        type:Number,
+        type: Number,
+        default: 0
+    },
+    weg: {
+        type: Number,
         default: 0
     }
 });

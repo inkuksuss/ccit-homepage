@@ -1,10 +1,25 @@
+/* eslint-disable no-restricted-syntax */
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-shadow */
 /* eslint-disable consistent-return */
 /* eslint-disable object-shorthand */
 import passport from "passport";
+import { PythonShell } from "python-shell";
+import Mongoose from "mongoose";
 import jwt from "jsonwebtoken";
 import User from "../models/User";
+import Food from "../models/Food";
+
+const scriptPath = '/Users/gim-ingug/Documents/ccit-homepage/.venv'
+const { Types: { ObjectId } } = Mongoose;
+
+const korea = new Date(); 
+const year = korea.getFullYear();
+const month = korea.getMonth();
+const lastMon = korea.getMonth() - 1;
+const date = korea.getDate()+1; // 수정
+const today = new Date(Date.UTC(year, month, date));
+const lastMonth = new Date(Date.UTC(year, lastMon, date));
 
 // Global
 export const apiPostJoin = async (req, res, next) => {
@@ -185,4 +200,110 @@ export const apiPostChangePassword =  async (req,res) => {
             err
         }).status(400);
     }
+};
+
+export const getApiProductDetail = async(req, res) => {
+    const {
+        params: { id }
+    } = req;
+    try {
+        const foods = await Food.aggregate([
+            { $match: { $and: [{ product: new ObjectId(id) }, { time: { $gte: lastMonth, $lt: today }}] }},
+            {
+                $group: {
+                    "_id": { "$week": "$time"},
+                    avgFoodValue: { $avg: "$amount" },
+                    avgRestValue: { $avg: "$rest" }
+                }
+            },
+            { $sort: { _id: 1 }}
+        ]);
+        const weights = await Weight.aggregate([
+            { $match: { $and: [{ product: new ObjectId(id) }, { time: { $gte: lastMonth, $lt: today }}] }},
+            {
+                $group: {
+                    "_id": { "$week": {"$toDate": "$time"} },
+                    avgWeightValue: { $avg: "$weg" }
+                }
+            },
+            { $sort: { _id: 1 }}
+        ]);
+        const dateBox = [];
+        const FoodBox = [];
+        const RestBox = [];
+        const WeightBox = [];
+        const WeightDateBox = [];
+        for(const food of foods) {
+            const startYear = new Date(Date.UTC(year, 0, 1));
+            const neededDate = new Date(startYear.setDate(startYear.getDate() + (food._id * 7)))
+            const neededYear = neededDate.getFullYear();
+            const neededMonth = neededDate.getMonth() + 1;
+            const neededDay = neededDate.getDate();
+            const needDate = `${neededYear}-${neededMonth < 10 ? `0${neededMonth}` : `${neededMonth}`}-${neededDay < 10 ? `0${neededDay}` : `${neededDay}`}`
+            dateBox.push(needDate);
+            FoodBox.push(food.avgFoodValue !== null ? food.avgFoodValue : 0);
+            RestBox.push(food.avgRestValue !== null ? food.avgRestValue : 0)
+        }
+        for(const weight of weights) {
+            const startYear = new Date(Date.UTC(year, 0, 1));
+            const neededDate = new Date(startYear.setDate(startYear.getDate() + (weight._id * 7)))
+            const neededYear = neededDate.getFullYear();
+            const neededMonth = neededDate.getMonth() + 1;
+            const neededDay = neededDate.getDate();
+            const needDate = `${neededYear}-${neededMonth < 10 ? `0${neededMonth}` : `${neededMonth}`}-${neededDay < 10 ? `0${neededDay}` : `${neededDay}`}`
+            WeightDateBox.push(needDate);
+            WeightBox.push(weight.avgWeightValue !== null ? weight.avgWeightValue : 0);
+        }
+        return res.json({
+            FoodBox,
+            RestBox, 
+            dateBox, 
+            WeightBox, 
+            WeightDateBox,
+            id, 
+        })
+    } catch(err) {
+        console.log(err)
+    }
+
+};
+
+export const postApiProductDetail = (req, res) => {
+    const {
+        params: { id },
+        body: { 
+            data
+        }
+    } = req;
+    PythonShell.run('ChartPage.py', {
+        mode: 'json',
+        pythonOptions: ['-u'],
+        scriptPath,
+        args: [id, data.start, data.end]
+    }, (err, result) => {
+        if(err) {
+            return console.log(err);
+        }
+        const dateBox = result[0]
+        const dataList = result[1]
+        console.log(dataList.amount);
+        console.log(dataList.rest)
+        if(data !== [] && dataList !== {}) {
+            console.log(dataList);
+            return res.json({
+                success: true,
+                dateBox,
+                amount: dataList.amount,
+                rest: dataList.rest,
+                weight: dataList.weight
+            })
+        } 
+        return res.json({
+            success: false,
+            dateBox: [],
+            amount: [],
+            rest: [],
+            weight: []
+        })
+    })
 };

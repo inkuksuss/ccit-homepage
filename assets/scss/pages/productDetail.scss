@@ -3,6 +3,18 @@
   .visual {
     display: block;
   }
+  .DataBox {
+    .Data__title {
+      display: grid;
+      grid-template-columns: repeat(4, 20%);
+    }
+    .Data__body {
+      .Data__Box__index {
+        display: grid;
+        grid-template-columns: repeat(4, 20%);
+      }
+    }
+  }
   .jsNewDataChartBox {
     display: none;
   }

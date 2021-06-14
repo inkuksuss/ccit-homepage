@@ -44,6 +44,8 @@ const API_USERS = "/api/users";
 const API_USER_DETAIL = "/:id";
 const API_EDIT_PROFILE = "/edit-profile";
 const API_CHANGE_PASSWORD = "/change-password";
+const API_PRODUCT = "/my/product";
+const API_PRODUCT_DETAIL = "/product/:id";
 
 // API_BOARDS
 const API_BOARDS = "/api/boards";
@@ -291,6 +293,14 @@ const routes = {
         return `/api/boards/video/${id}/delete`
       } else {
         return API_DELETE_VIDEO
+      }
+    },
+    apiProduct: API_PRODUCT,
+    apiProductDetail: id => {
+      if(id) {
+        return `/api/users/product/${id}`;
+      } else {
+        return PRODUCT_DETAIL;
       }
     },
 };

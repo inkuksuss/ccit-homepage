@@ -8,7 +8,6 @@ import routes from "../routes";
 import User from "../models/User";
 import Product from "../models/Product";
 import Food from "../models/Food";
-import Weight from "../models/Weight";
 
 const scriptPath = '/Users/gim-ingug/Documents/ccit-homepage/.venv'
 
@@ -90,7 +89,7 @@ export const getMe =  async (req, res) => {
 
 // Users
 export const getProduct = (req, res) => {
-    res.render("product", {pageTitle: "기기 정보"});
+    res.render("product", { pageTitle: "기기 정보" });
 }
 
 export const userDetail = async (req, res) => {
@@ -204,26 +203,17 @@ export const getProductDetail = async(req, res) => {
                 $group: {
                     "_id": { "$week": "$time"},
                     avgFoodValue: { $avg: "$amount" },
-                    avgRestValue: { $avg: "$rest" }
-                }
-            },
-            { $sort: { _id: 1 }}
-        ]);
-        const weights = await Weight.aggregate([
-            { $match: { $and: [{ product: new ObjectId(id) }, { time: { $gte: lastMonth, $lt: today }}] }},
-            {
-                $group: {
-                    "_id": { "$week": {"$toDate": "$time"} },
+                    avgRestValue: { $avg: "$rest" },
                     avgWeightValue: { $avg: "$weg" }
                 }
             },
             { $sort: { _id: 1 }}
         ]);
+        const allData = await Food.find({ product: id, time: { $gte: lastMonth, $lt: today }}).sort({ time: 'desc' });
         const dateBox = [];
         const FoodBox = [];
         const RestBox = [];
         const WeightBox = [];
-        const WeightDateBox = [];
         for(const food of foods) {
             const startYear = new Date(Date.UTC(year, 0, 1));
             const neededDate = new Date(startYear.setDate(startYear.getDate() + (food._id * 7)))
@@ -233,19 +223,10 @@ export const getProductDetail = async(req, res) => {
             const needDate = `${neededYear}-${neededMonth < 10 ? `0${neededMonth}` : `${neededMonth}`}-${neededDay < 10 ? `0${neededDay}` : `${neededDay}`}`
             dateBox.push(needDate);
             FoodBox.push(food.avgFoodValue !== null ? food.avgFoodValue : 0);
-            RestBox.push(food.avgRestValue !== null ? food.avgRestValue : 0)
+            RestBox.push(food.avgRestValue !== null ? food.avgRestValue : 0);
+            WeightBox.push(food.avgWeightValue !== null ? food.avgWeightValue : 0);
         }
-        for(const weight of weights) {
-            const startYear = new Date(Date.UTC(year, 0, 1));
-            const neededDate = new Date(startYear.setDate(startYear.getDate() + (weight._id * 7)))
-            const neededYear = neededDate.getFullYear();
-            const neededMonth = neededDate.getMonth() + 1;
-            const neededDay = neededDate.getDate();
-            const needDate = `${neededYear}-${neededMonth < 10 ? `0${neededMonth}` : `${neededMonth}`}-${neededDay < 10 ? `0${neededDay}` : `${neededDay}`}`
-            WeightDateBox.push(needDate);
-            WeightBox.push(weight.avgWeightValue !== null ? weight.avgWeightValue : 0);
-        }
-        res.render('productDetail', { pageTitle: "내 기기" , FoodBox, RestBox, dateBox, id, WeightBox, WeightDateBox })
+        res.render('productDetail', { pageTitle: "내 기기" , FoodBox, RestBox, WeightBox, dateBox, allData, id })
     } catch(err) {
         console.log(err)
     }
@@ -268,23 +249,26 @@ export const postProductDetail = (req, res) => {
         if(err) {
             return console.log(err);
         }
-        const dateBox = result[0]
-        const dataList = result[1]
-        console.log(dataList.amount);
-        console.log(dataList.rest)
-        if(data !== [] && dataList !== {}) {
-            console.log(dataList);
+        const DateBox = result[0];
+        const DataBox = result[1];
+        const allDataList = result[2];
+        console.log(DateBox);
+        console.log(DataBox);
+        console.log(allDataList);
+        if(DateBox !== [] && DataBox !== {} && allDataList !== []) {
             return res.json({
                 success: true,
-                dateBox,
-                amount: dataList.amount,
-                rest: dataList.rest,
-                weight: dataList.weight
+                DateBox,
+                allDataList,
+                amount: DataBox.amount,
+                rest: DataBox.rest,
+                weight: DataBox.weight
             })
         } 
-        res.json({
+        return res.json({
             success: false,
-            dateBox: [],
+            DateBox: [],
+            allDataList: [],
             amount: [],
             rest: [],
             weight: []

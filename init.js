@@ -46,39 +46,92 @@ client.on("connect", () => {
     console.log("😇Mqtt Connect");
     client.subscribe('jb/ccit/dogbab/smit/petoy/+/cb');
     client.subscribe('jb/ccit/dogbab/smit/petoy/+/+/output/stepmt/+/cb'); 
+    client.subscribe('jb/ccit/dogbab/smit/petoy/+/+/output/stepmt/+/ad'); 
     client.subscribe('jb/ccit/dogbab/smit/petoy/+/+/input/+'); 
 });
 
-client.on("message", async (topic, message) => {
-    const obj = JSON.parse(message);
-    const date = new Date();
-    const year = date.getFullYear();
-    const month = date.getMonth();
-    const today = date.getDate();
-    const hours = date.getHours();
-    const mintues = date.getMinutes();
-    const seconds = date.getSeconds();
-    const contaienr = topic.split('/')
-    obj.createdAt = new Date(Date.UTC(year, month, today, hours, mintues, seconds));
-    try{
-        if(contaienr.length === 6 && contaienr[6] === "cb") {
-            const { success, serNum, userId } = obj;
-            if(success) {
-                await User.findByIdAndUpdate(userId, {$push: { key: serNum }});
+client.on('message', async(topic, message) => {
+    const topicContainer = topic.split('/');
+    const msg = JSON.parse(message);
+    if(topicContainer[7] === 'input' && topicContainer[8] === 'smalllod') {
+        const { success, time, rest } = msg;
+        if(success) {
+            const userId = topicContainer[5];
+            const key = topicContainer[6];
+            const receiveDate = time.split(' ')[0]
+            const receiveTime = time.split(' ')[1]
+            const nowDate = receiveDate.split("-");
+            const nowTime = receiveTime.split(":");
+            const date = new Date(Date.UTC(
+                Number(nowDate[0]), Number(nowDate[1]) - 1, Number(nowDate[2]),
+                Number(nowTime[0]), Number(nowTime[1]), Number(nowTime[2]),          
+            ));
+            try {
+                const product = await Product.findOne({ key });
+                const test = await Food.findOneAndUpdate({ product: product.id, time: date }, { rest: Math.round(rest) });
+                console.log(test)
+            } catch(error) {
+                console.log(error)
             }
-            
-
+        } 
+    } else if (topicContainer[7] === 'input' && topicContainer[8] === 'doglod') {
+        const { success, time, weg } = msg;
+        if(success) {
+            const userId = topicContainer[5];
+            const key = topicContainer[6];
+            const receiveDate = time.split(' ')[0]
+            const receiveTime = time.split(' ')[1]
+            const nowDate = receiveDate.split("-");
+            const nowTime = receiveTime.split(":");
+            const date = new Date(Date.UTC(
+                Number(nowDate[0]), Number(nowDate[1]) - 1, Number(nowDate[2]),
+                Number(nowTime[0]), Number(nowTime[1]), Number(nowTime[2]),          
+            ));
+            try {
+                const product = await Product.findOne({ key });
+                const test = await Food.findOneAndUpdate({ product: product.id, time: date }, { weg: Math.round(weg) });
+                console.log(test);
+            } catch(error) {
+                console.log(error)
+            }
         }
-    } catch (err) {
-        console.log({ message: err });
     }
 });
+
+
+// client.on("message", async (topic, message) => {
+//     const obj = JSON.parse(message);
+//     const date = new Date();
+//     const year = date.getFullYear();
+//     const month = date.getMonth();
+//     const today = date.getDate();
+//     const hours = date.getHours();
+//     const mintues = date.getMinutes();
+//     const seconds = date.getSeconds();
+//     const contaienr = topic.split('/')
+//     obj.createdAt = new Date(Date.UTC(year, month, today, hours, mintues, seconds));
+//     try{
+//         if(contaienr.length === 6 && contaienr[6] === "cb") {
+//             const { success, serNum, userId } = obj;
+//             if(success) {
+//                 await User.findByIdAndUpdate(userId, {$push: { key: serNum }});
+//             }
+            
+
+//         }
+//     } catch (err) {
+//         console.log({ message: err });
+//     }
+// });
 
 // 웹소켓서버
 const io = socketIO(server);
 
 io.on("connection", socket => {
     console.log("😘Socket Connect")
+    console.log(socket.id)
+    console.log(socket.connected);
+    console.log(socket.disconnected)
     // 채팅  
     socket.on("newMessage", ({ message }) => {  
         socket.broadcast.emit("messageNotif", {
@@ -89,13 +142,7 @@ io.on("connection", socket => {
     socket.on("setNickname", ({ nickname }) => {
         socket.nickname = nickname;
     });
-    // Mqtt 데이터
-    // socket.on("mqttSubmit", () => {
-    //     DHT.find({}).sort({ _id: -1 }).limit(1).then(res => {
-    //         socket.emit("mqttSubmit", JSON.stringify(res[0]))
-    //     })
-    // })
-
+    
     socket.on("deviceAuth", (key) => {
         key.order = 1;
         const jsonKey = JSON.stringify(key)
@@ -138,46 +185,45 @@ io.on("connection", socket => {
             order: 3,
             userId
         }
-        console.log(sending);
-        console.log(`jb/ccit/dogbab/smit/petoy/${userId}/${keyName}/stepmt/ad`);
         const jsSending = JSON.stringify(sending);
-            client.publish(`jb/ccit/dogbab/smit/petoy/${userId}/${keyName}/stepmt/ad`, jsSending, async(err) => {
+            client.publish(`jb/ccit/dogbab/smit/petoy/${userId}/${keyName}/output/stepmt/ad`, jsSending, async(err) => {
                 if(err) {
                     return console.log(err);
                 }
-                console.log(jsSending)
                 client.on("message", async(topic, message) => {
-                    console.log('asdasd')
-                    if(topic === `jb/ccit/dogbab/smit/petoy/${userId}/${keyName}/stepmt/ad`) {
+                    if(topic === `jb/ccit/dogbab/smit/petoy/${userId}/${keyName}/output/stepmt/ad/cb`) {
                         const result = JSON.parse(message);
                         console.log(result)
-                        const { success, time: { timeArray } } = result;
+                        const { success, time: timeArray, amount: amountArray } = result;
                         if(success) {
                             try {
                                 const product = await Product.findOne({ key: keyName });
+                                let i = 0;
                                 for await(const times of timeArray) {
-                                    const receiveDate = times.split(' ')[0]
-                                    const receiveTime = times.split(' ')[1]
-                                    const nowDate = receiveDate.split("-");
-                                    const nowTime = receiveTime.split(":");
-                                    const date = new Date(Date.UTC(
-                                        Number(nowDate[0]), Number(nowDate[1]) - 1, Number(nowDate[2]),
-                                        Number(nowTime[0]), Number(nowTime[1]), Number(nowTime[2]),          
-                                    ));
+                                    const newDate = new Date();
+                                    const year = newDate.getFullYear();
+                                    const month = newDate.getMonth();
+                                    const today = newDate.getDate();
+                                    const nowTime = times.split(":");
+                                    const date = new Date(Date.UTC(year, month, today, Number(nowTime[0]), Number(nowTime[1])));
+                                    console.log('///')
+                                    console.log(date);
                                     const data = await Food.create({
                                         controller: userId,
                                         product,
                                         time: date,
-                                        amount: Math.round(amount)
+                                        amount: Number(amountArray[i++])
                                     })
+                                    console.log(data)
                                     data.save();
                                 }
                                 setTimeout(() => {
-                                    socket.on('sendControlCb', true);
+                                    socket.emit('sendControlCb', true);
                                 }, 1000);
+                                client.end()
                             } catch(error) {
                                 setTimeout(() => {
-                                    socket.on('sendControlCb', false);
+                                    socket.emit('sendControlCb', false);
                                 }, 1000);
                                 console.log(error);
                             }
@@ -215,7 +261,6 @@ io.on("connection", socket => {
                             Number(nowDate[0]), Number(nowDate[1]) - 1, Number(nowDate[2]),
                             Number(nowTime[0]), Number(nowTime[1]), Number(nowTime[2]),          
                         ));
-                        console.log(date)
                         if(success) {
                             try {
                                 const product = await Product.findOne({ key: keyName });
@@ -230,6 +275,8 @@ io.on("connection", socket => {
                                 setTimeout(() => {
                                     socket.emit('sendOneControlCb', true);
                                 }, 1500);
+                                // client.end();
+                                // client.reconnect();
                             } catch(error) {
                                 setTimeout(() => {
                                     socket.emit('sendOneControlCb', false);
@@ -237,27 +284,6 @@ io.on("connection", socket => {
                                 console.log(error);
                             }
                         }; 
-                    } else if(topic === `jb/ccit/dogbab/smit/petoy/${userId}/${keyName}/input/smalllod`) {
-                        const { success, time } = result;
-                        const receiveDate = time.split(' ')[0]
-                        const receiveTime = time.split(' ')[1]
-                        const nowDate = receiveDate.split("-");
-                        const nowTime = receiveTime.split(":");
-                        const date = new Date(Date.UTC(
-                            Number(nowDate[0]), Number(nowDate[1]) - 1, Number(nowDate[2]),
-                            Number(nowTime[0]), Number(nowTime[1]), Number(nowTime[2]),          
-                        ));
-                        if(success) {
-                            const topicKey = topic.split('/')[6];
-                            console.log(topicKey)
-                            try {
-                                const product = await Product.findOne({ key: topicKey });
-                                await Food.findOneAndUpdate({ product, time: date }, { rest: Math.round(result.rest) });
-                                return console.log(result.rest)
-                            } catch(error) {
-                                console.log(error)
-                            }
-                        } 
                     } 
                 })
             });

@@ -7,21 +7,45 @@ block content
             input#jsFoods(type="hidden", value=FoodBox)
             input#jsRests(type="hidden", value=RestBox)
             input#jsWeights(type="hidden", value=WeightBox)
-            input#jsWeightsDateBox(type="hidden", value=WeightDateBox)
+            input#jsAllData(type="hidden", value=allData)
             input.jsDateBox(type="hidden")
             input.jsAmount(type="hidden")
             input.jsRest(type="hidden")
             input.jsWeight(type="hidden")
-            p 조회기간:
-                input(type="text" id="datepicker1") 
-                span ~
-                input(type="text" id="datepicker2")
-                input#jsDateSend(type="submit" value="조회")
+            .DateBox
+                p 조회기간:
+                    input(type="text" id="datepicker1") 
+                    span ~
+                    input(type="text" id="datepicker2")
+                    input#jsDateSend(type="submit" value="조회")
             
+            .DataBox
+                .Data__title
+                    .Data__title__time
+                        span 측정시간
+                        button#jsSortTime(type="button")
+                            i#jsTimeIcon.fas.fa-caret-down
+                    .Data__title__give
+                        span 배식량
+                        button#jsSortGive(type="button")
+                            i#jsGiveIcon.fas.fa-caret-down
+                    .Data__title__rest
+                        span 잔반량
+                        button#jsSortRest(type="button")
+                            i#jsRestIcon.fas.fa-caret-down
+                    .Data__title__weight
+                        span 몸무게
+                        button#jsSortWeg(type="button")
+                            i#jsWegIcon.fas.fa-caret-down 
+                .Data__body
+                    #Data__body__sort__time
+                    #Data__body__sort__give
+                    #Data__body__sort__rest
+                    #Data__body__sort__weight
+                    #Data__body__sort__default
+                #Data__button
+
 
             #jsDefaultDataChartBox
-                canvas(id="myChart" width="1000px" height="1000px")    
-                canvas(id="myWeight" width="1000px" height="1000px") 
-            #jsNewDataChartBox
-                //- canvas(id="myFoodChart" width="1000px" height="1000px")    
-                //- canvas(id="myWeightChart" width="1000px" height="1000px")    
+                canvas(id="myChart" width="500px" height="500px")    
+            #jsNewDataChartBox 
