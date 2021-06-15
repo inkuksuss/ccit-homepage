@@ -446,8 +446,7 @@ export const postRegiserVideoView = async (req, res) => {
     } finally {
         res.end();
     }
-};
-
+}
 export const postVideoComplain = async (req, res) => {
     const { 
         params: { id },
@@ -538,8 +537,6 @@ export const postPhotoComplainPopup = async(req, res) => {
     try {
         const user = await User.findById(userId);
         const photo  = await Photo.findById(id);
-        console.log(photo)
-        console.log(user)
         if(user && photo) {
             const exist = photo.complain.filter(list => String(list) === String(userId));
             if(exist.length === 0){

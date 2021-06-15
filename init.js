@@ -46,7 +46,7 @@ client.on("connect", () => {
     console.log("😇Mqtt Connect");
     client.subscribe('jb/ccit/dogbab/smit/petoy/+/cb');
     client.subscribe('jb/ccit/dogbab/smit/petoy/+/+/output/stepmt/+/cb'); 
-    client.subscribe('jb/ccit/dogbab/smit/petoy/+/+/output/stepmt/+/ad'); 
+    // client.subscribe('jb/ccit/dogbab/smit/petoy/+/+/output/stepmt/+/cb'); 
     client.subscribe('jb/ccit/dogbab/smit/petoy/+/+/input/+'); 
 });
 

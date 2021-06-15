@@ -6,7 +6,7 @@ block content
         .photo__info
             if loggedUser && photo.creator.id === loggedUser.id
                     a(href=routes.editPhoto(photo.id))
-                        button 아미지 수정
+                        button 이미지 수정
             h5.photo__title=photo.title
             p.photo__description=photo.description
             if photo.views === 1

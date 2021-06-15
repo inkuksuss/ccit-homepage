@@ -12,10 +12,8 @@ const deleteVideoCommentForms = document.querySelectorAll('.jsDeleteVideoComment
 const updateVideoCommentForms = document.querySelectorAll('.jsUpdateVideoComment');
 const videoComplainBtn = document.getElementById('jsVideoComplain');
 
-
 let loggedUser;
 let loggedUserName;
-
 
 const videoComplain = async() => {
     try {

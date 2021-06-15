@@ -8,16 +8,10 @@ const ProductSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         rel: "User"
     },
-    FoodData: [
+    data: [
         {
             type: mongoose.Schema.Types.ObjectId,
             rel: "Food"
-        }
-    ],
-    WeightData: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            rel: "Weight"
         }
     ]
 });
