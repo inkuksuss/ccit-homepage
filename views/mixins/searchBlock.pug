@@ -1,0 +1,9 @@
+mixin photoBlock(photo = {})
+    .search_photoBlock 
+        a(href=routes.photoDetail(photo.id))
+            img.search_photoBlock__thumbnail(src=`/${photo.photoFile}`)
+            h4.search_photoBlock__title=photo.title
+            if photo.views === 1
+                h6.search_photoBlock__views 1 조회수
+            else
+                h6.search_photoBlock__views #{photo.views} 조회수

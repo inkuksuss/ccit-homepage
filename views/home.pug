@@ -1,4 +1,56 @@
 extends layouts/main
 
 block content
-    p homepage
+    .wrapper
+        -
+            var images = [ // Images by various people from Unsplash
+                    {
+                        src: '60c5dfb70cc65e199c423263',
+                        url: '30778e06d81122a50d0fd6a40dbd073c'
+                    }, {
+                        src: '60c5dfab0cc65e199c423262',
+                        url: 'bd444b9e24ffdd8a7113cebe451deda1'
+                    }, {
+                        src: '60c5df9d0cc65e199c423261',
+                        url: '00ab7e40415c79e7e976c2b2fa187a1a'
+                    }, {
+                        src: '60c5df940cc65e199c423260',
+                        url: 'b22592c56f891ac20e83df66016de685'
+                    }, {
+                        src: '60c5df8a0cc65e199c42325f',
+                        url: '3661503eed23b082a890309046a83961'
+                    }, {
+                        src: '60c5df810cc65e199c42325e',
+                        url: 'ff24880e824642ad8e48e30126331116'
+                    }, {
+                        src: '60c5df740cc65e199c42325d',
+                        url: '976cc2e2d8478498f548a6fc3680eb90'
+                    }
+                ];
+
+    #hero-slides
+        #header
+            #logo
+            #menu
+                #hamburger
+                    -for(var i = 0; i < 3; i++)
+                        .slice
+        #slides-cont
+            .button#next
+            .button#prev
+            #slides
+                -for(var i = 0; i < 7; i++)
+                    - var img = images[i % images.length]
+                    .slide(style=`background-image: url(http://localhost:3002/uploads/boards/photo/${img.url})`)
+                        .number=('0' + (i + 1)).slice(-2)
+                        .body 
+                            .location=img.loc
+                            a.slide_a(href=`http://localhost:3002/boards/photo/${img.src}` target="_blank")
+                                .link 게시글 보러가기
+            #next-catch
+            #prev-catch
+        #slidesfooter
+            //- #page-counter
+            a.slides_a(href="https://dribbble.com/shots/3888265-Motion-Study" target="_blank")
+                #dribbble
+

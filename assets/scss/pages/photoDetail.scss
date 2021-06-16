@@ -1,3 +1,5 @@
+@import "https://fonts.googleapis.com/css?family=Montserrat:400,700";
+
 .photo-detail__container {
   display: flex;
   flex-direction: column;
@@ -32,24 +34,65 @@
       font-size: 16px;
     }
   }
+  #jsAddPhotoComment {
+    margin-top: 10px;
+    position:relative;
+    color: #000;
+    font-size: 18px;
+    border-radius: 5px;
+    border: 2px solid #008A00;
+    padding: 13px;
+    margin-bottom: 15px;
+    width: 750px;
+      .jsDeletePhotoInput.visible{
+        border: 2px solid #008A00;
+      }
+  }
   .photo__comments {
     margin-top: 25px;
     .photo__comment-number {
+      position: right;
       font-size: 18px;
     }
     .photo__comments-list {
+      margin-top: 15px;
       li {
         display: flex;
-        justify-content: space-between;
+        // justify-content: space-between;
         a {
           color: green;
         }
-        .jsDeletePhotoComment {
-          .jsDeletePhotoBtn {
-            background: #1aab8a;
+        .jsUpdatePhotoComment {
+          .jsUpdatePhotoBtn{
+            background: #15aa52;
             color: #fff;
             border: none;
-            height: 20px;
+            outline: none;
+            width: 29px;
+            height: 25px;
+            cursor: pointer;
+          }
+          button:hover {
+            background: #fff;
+            color: #1aab8a;
+          }
+          button:before,
+          button:after {
+            top: 0;
+            right: 0;
+            height: 2px;
+            width: 0;
+            background: #15aa52;
+            transition: 400ms ease all;
+          }
+        }
+        .jsDeletePhotoComment {
+          .jsDeletePhotoBtn {
+            background: #15aa52;
+            width: 30px;
+            height: 25px;
+            color: #fff;
+            border: none;
             cursor: pointer;
             transition: 800ms ease all;
             outline: none;
@@ -64,7 +107,7 @@
             right: 0;
             height: 2px;
             width: 0;
-            background: #1aab8a;
+            background: #15aa52;
             transition: 400ms ease all;
           }
         }

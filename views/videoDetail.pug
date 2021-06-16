@@ -13,32 +13,34 @@ block content
             h5.video__title=video.title
             p.video__description=video.description
             if video.views === 1
-                span.video__views 1 view
+                span.video__views 1 조회수
             else 
-                span.video__views #{video.views} views
+                span.video__views #{video.views} 조회수
             .video__author
                 |Uploaded by 
                 a(href=routes.userDetail(video.creator.id))=video.creator.name
             if loggedUser && loggedUser.id !== video.creator.id
-                #jsVideoComplain
-                    button(type="submit")
-                        i.fas.fa-thumbs-down 신고하기
+                button#jsVideoComplain(type="submit")
+                br
+                p.complain_p 게시글 신고하기
+                br
         .video__comments
+            form.add__comment#jsAddVideoComment
+                input(type="text", placeholder="댓글...")
             if video.comments.length === 1
                 span.video__comment-number
                     span#jsCommentVideoNumber 1
-                    |  comment
+                    |  댓글
             else  
                 span.video__comment-number
                     span#jsCommentVideoNumber=video.comments.length
-                    |  comments
-            form.add__comment#jsAddVideoComment
-                input(type="text", placeholder="댓글...")
+                    |  댓글
+
             ul.video__comments-list#jsCommentVideoList
                 each comment in video.comments.reverse()
                     li
-                        span=comment.text
                         a(href=`${routes.userDetail(comment.creator)}`)=comment.displayName
+                        span=comment.text
                         if (loggedUser)
                             if (loggedUser.id === video.creator.id)
                                 form.jsDeleteVideoComment

@@ -1,0 +1,14 @@
+.search__videos {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    grid-column-gap: 10px ;
+    grid-row-gap: 15px;
+    margin-top: 50px;
+}
+
+.search__photos {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  grid-column-gap: 10px ;
+  grid-row-gap: 15px;
+}

@@ -8,3 +8,4 @@ import "./deviceList";
 import "./remote";
 import "./productPage";
 import "./chart";
+import "./imgslides";

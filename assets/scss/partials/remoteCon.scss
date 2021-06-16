@@ -1,18 +1,32 @@
 .section {
   position: fixed;
   // display: none;
-  right: 0;
-  bottom: 1;
-  width: 200px;
-  height: 200px;
-  background-color: #ffffff;
-  .remote__title {
-    font-size: 32px;
-  }
-  .remote__controller {
-    .remote__list {
-      display: flex;
-      justify-content: center;
+  right: 30px;
+  top: 200px;
+  width: 380px;
+  height: 500px;
+  background-color: #E8F5E9;
+  border: 30px solid darken(#eafff7, 50%);
+  border-radius: 180px;
+  z-index: 1000;
+  .remote_form{
+    padding-top: 130px;
+    text-align: center;
+    .remote__title {
+      font-size: 32px;
+      align-items: center;
+    }
+    .remote__controller {
+      .remote__list {
+        display: flex;
+        justify-content: center;
+        #jsDinnerTime{
+          // color: #E8F5E9;
+          // background-color:#E8F5E9 ;
+          // background-image: #E8F5E9;
+          
+        }
+      }
     }
   }
 }

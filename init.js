@@ -48,11 +48,14 @@ client.on("connect", () => {
     client.subscribe('jb/ccit/dogbab/smit/petoy/+/+/output/stepmt/+/cb'); 
     // client.subscribe('jb/ccit/dogbab/smit/petoy/+/+/output/stepmt/+/cb'); 
     client.subscribe('jb/ccit/dogbab/smit/petoy/+/+/input/+'); 
+    client.subscribe('abc'); 
 });
+
 
 client.on('message', async(topic, message) => {
     const topicContainer = topic.split('/');
     const msg = JSON.parse(message);
+    console.log(msg);
     if(topicContainer[7] === 'input' && topicContainer[8] === 'smalllod') {
         const { success, time, rest } = msg;
         if(success) {

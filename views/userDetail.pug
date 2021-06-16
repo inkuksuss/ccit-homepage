@@ -3,40 +3,47 @@ include mixins/videoBlock
 include mixins/photoBlock
 
 block content
-    .user-profile
-        if (user.avatar !== "basicimg")
-            .user-profile__header    
-                img.u-avatar(src=`/${user.avatar}`)
-                span=user.avatar
-                h4.profile__username=user.name
-        else
-            .user-profile__header    
-                img.u-avatar(src='../image/basicimg.png')
-                h4.profile__username=user.name
+    .wrapper
+        .user-profile
+            if (user.avatar !== "basicimg")
+                .user-profile__header
+                    .user_profile_img
+                        img.u-avatar(src=`/${user.avatar}`)
+                    //- span=user.avatar
+                    br
+                    h4.profile__username=user.name
+            else
+                .user-profile__header    
+                    img.u-avatar(src='../image/basicimg.png')
+                    br
+                    h4.profile__username=user.name
 
-        if (loggedUser)
-            .user-profile__btns
-                a(href=`/users${routes.editProfile}`)
-                    button ✏️ 개인정보 수정
-                a(href=`/users${routes.changePassword}`)
-                    button 🔒 비밀번호 변경 
-                a(href=`/users${routes.addKey}`)
-                    button 🎮 제품 등록
-            .user-device-list
-                input.user-device-key(type="hidden", value=loggedUser)
-    .home-videos
-            each item in user.videos 
-                +videoBlock({
-                    id: item.id,
-                    title: item.title,
-                    views: item.views,
-                    videoFile: item.videoUrl
-                })
-    .home-videos
-            each item in user.photos 
-                +photoBlock({
-                    id: item.id,
-                    title: item.title,
-                    views: item.views,
-                    photoFile: item.photoUrl
-                })
+            if (loggedUser)
+                .user-profile__btns
+                    a(href=`/users${routes.editProfile}`)
+                        button.profile_edit_btn ✏️ 개인정보 수정
+                    a(href=`/users${routes.changePassword}`)
+                        button.profile_edit_btn 🔒 비밀번호 변경 
+                    a(href=`/users${routes.addKey}`)
+                        button.profile_edit_btn 🎮 제품 등록
+                .user-device-list
+                    input.user-device-key(type="hidden", value=loggedUser)
+
+        p.profile_post_type 내가 올린 동영상
+        .home-videos
+                each item in user.videos 
+                    +videoBlock({
+                        id: item.id,
+                        title: item.title,
+                        views: item.views,
+                        videoFile: item.videoUrl
+                    })
+        p.profile_post_type 내가 올린 사진            
+        .home-photos
+                each item in user.photos 
+                    +photoBlock({
+                        id: item.id,
+                        title: item.title,
+                        views: item.views,
+                        photoFile: item.photoUrl
+                    })

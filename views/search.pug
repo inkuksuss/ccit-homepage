@@ -1,28 +1,32 @@
 extends layouts/main
 include mixins/videoBlock
-include mixins/photoBlock
+include mixins/searchBlock
 
 block content
-    .search__header
-        h3 Searching for #{searchingBy}
-    .search__videos
-        if videos.length === 0
-            h5 No videos Found
-        each item in videos
-            +videoBlock({
-                id:item.id,
-                title:item.title,
-                views:item.views,
-                videoFile:item.videoUrl
-            })
+    .wrapper
+        .search__header
+            h3 "#{searchingBy}" 를 찾았습니다.
+        p.search_type 동영상
+        .search__videos
+            if videos.length === 0
+                h5 동영상을 찾을수 없습니다...
+            each item in videos
+                +videoBlock({
+                    id:item.id,
+                    title:item.title,
+                    views:item.views,
+                    videoFile:item.videoUrl
+                })
 
-    .search__photos
-        if photos.length === 0
-            h5 No photos Found
-        each item in photos
-            +photoBlock({
-                id:item.id,
-                title:item.title,
-                views:item.views,
-                photoFile:item.photoUrl
-            })
+        .search__photos
+        p.search_type 사진
+            if photos.length === 0
+                h5 사진을 찾을수 없습니다...
+        .search__photos
+            each item in photos
+                +photoBlock({
+                    id:item.id,
+                    title:item.title,
+                    views:item.views,
+                    photoFile:item.photoUrl
+                })

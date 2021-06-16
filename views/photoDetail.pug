@@ -1,61 +1,63 @@
 extends layouts/main
 
 block content
-    .photo-detail__container
-        img(src=`/${photo.photoUrl}`)
-        .photo__info
-            if loggedUser && photo.creator.id === loggedUser.id
-                    a(href=routes.editPhoto(photo.id))
-                        button 이미지 수정
-            h5.photo__title=photo.title
-            p.photo__description=photo.description
-            if photo.views === 1
-                span.photo__views 1 view
-            else 
-                span.photo__views #{photo.views} views
-            .photo__author
-                |Uploaded by 
-                a(href=routes.userDetail(photo.creator.id))=photo.creator.name
-            if loggedUser && loggedUser.id !== photo.creator.id
-                #jsPhotoComplain
-                    button(type="submit")
-                        i.fas.fa-thumbs-down 신고하기
-        .photo__comments
-            if photo.comments.length === 1
-                span.photo__comment-number
-                    span#jsCommentPhotoNumber 1
-                    |  comment
-            else  
-                span.photo__comment-number
-                    span#jsCommentPhotoNumber=photo.comments.length
-                    |  comments
-            form.add__comment#jsAddPhotoComment
-                input(type="text", placeholder="댓글...")
-            ul.photo__comments-list#jsCommentPhotoList
-                each comment in photo.comments.reverse()
-                    li
-                        span=comment.text
-                        a(href=`${routes.userDetail(comment.creator)}`)=comment.displayName
-                        if (loggedUser)
-                            if (loggedUser.id === photo.creator.id)
-                                form.jsDeletePhotoComment
-                                    input.jsDeletePhotoInput(type="hidden" value=comment.id)
-                                    button.jsDeletePhotoBtn(onclick="return confirm('정말로 삭제하시겠습니까?')")
-                                        i.fas.fa-trash-alt
-                            each loggedUserComment in loggedUser.comments
-                                if (comment.id === String(loggedUserComment) && loggedUser.id === photo.creator.id)
-                                    form.jsUpdatePhotoComment
-                                        input.jsUpdatePhotoTarget(type="hidden" value=comment.id)
-                                        button.jsUpdatePhotoBtn
-                                            i.fas.fa-user-edit
-                                        input.jsUpdatePhotoInput(type="text" placeholder=`${comment.text}`)
-                                else if (comment.id === String(loggedUserComment) && loggedUser.id !== photo.creator.id)
+    .wrapper
+        .photo-detail__container
+            img(src=`/${photo.photoUrl}`)
+            .photo__info
+                if loggedUser && photo.creator.id === loggedUser.id
+                        a(href=routes.editPhoto(photo.id))
+                            button 아미지 수정
+                h5.photo__title=photo.title
+                p.photo__description=photo.description
+                if photo.views === 1
+                    span.photo__views 1 view
+                else 
+                    span.photo__views #{photo.views} views
+                .photo__author
+                    |Uploaded by 
+                    a(href=routes.userDetail(photo.creator.id))=photo.creator.name
+                if loggedUser && loggedUser.id !== photo.creator.id
+                    button#jsPhotoComplain(type="submit")
+                    br
+                    p.complain_p 게시글 신고하기
+                    br                  
+            .photo__comments
+                form.add__comment#jsAddPhotoComment
+                    input(type="text", placeholder="댓글...")
+                if photo.comments.length === 1
+                    span.photo__comment-number
+                        span#jsCommentPhotoNumber 1
+                        |  comment
+                else  
+                    span.photo__comment-number
+                        span#jsCommentPhotoNumber=photo.comments.length
+                        |  comments
+                ul.photo__comments-list#jsCommentPhotoList
+                    each comment in photo.comments.reverse()
+                        li
+                            a(href=`${routes.userDetail(comment.creator)}`)=comment.displayName
+                            span=comment.text
+                            if (loggedUser)
+                                if (loggedUser.id === photo.creator.id)
                                     form.jsDeletePhotoComment
                                         input.jsDeletePhotoInput(type="hidden" value=comment.id)
                                         button.jsDeletePhotoBtn(onclick="return confirm('정말로 삭제하시겠습니까?')")
                                             i.fas.fa-trash-alt
-                                    form.jsUpdatePhotoComment
-                                        input.jsUpdatePhotoTarget(type="hidden" value=comment.id)
-                                        button.jsUpdatePhotoBtn
-                                            i.fas.fa-user-edit
-                                        input.jsUpdatePhotoInput(type="text" placeholder=`${comment.text}`)
+                                each loggedUserComment in loggedUser.comments
+                                    if (comment.id === String(loggedUserComment) && loggedUser.id === photo.creator.id)
+                                        form.jsUpdatePhotoComment
+                                            input.jsUpdatePhotoTarget(type="hidden" value=comment.id)
+                                            button.jsUpdatePhotoBtn
+                                                i.fas.fa-user-edit
+                                            input.jsUpdatePhotoInput(type="text" placeholder=`${comment.text}`)
+                                    else if (comment.id === String(loggedUserComment) && loggedUser.id !== photo.creator.id)
+                                        form.jsDeletePhotoComment
+                                            input.jsDeletePhotoInput(type="hidden" value=comment.id)
+                                            button.jsDeletePhotoBtn(onclick="return confirm('정말로 삭제하시겠습니까?')")
+                                                i.fas.fa-trash-alt
+                                        form.jsUpdatePhotoComment
+                                            input.jsUpdatePhotoTarget(type="hidden" value=comment.id)
+                                            button.jsUpdatePhotoBtn
+                                                i.fas.fa-user-edit
+                                            input.jsUpdatePhotoInput(type="text" placeholder=`${comment.text}`)

@@ -5,6 +5,7 @@
 @import "pages/photoDetail.scss";
 @import "pages/home.scss";
 @import "pages/productDetail.scss";
+@import "pages/search_grid.scss";
 
 @import "partials/videoPlayer.scss";
 @import "partials/videoBlock.scss";
@@ -15,15 +16,29 @@
 @import "partials/messages.scss";
 @import "partials/remoteCon.scss";
 
+@import "partials/wrapper.scss";
+@import "partials/imgslides.scss";
+@import "partials/menu.scss";
+@import "partials/userdeail.scss";
+@import "partials/footer.scss";
+@import "partials/upload.scss";
+@import "partials/complain.scss";
+@import "partials/search_result.scss";
+
 * {
   box-sizing: border-box;
 }
 
 body {
-  margin-top: 120px;
+  // margin-top: 120px;
   width: 100%;
   background-color: #ffffff;
-  .videos,
+  .videos{
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    grid-column-gap: 10px;
+    grid-row-gap: 10px;
+  }
   .photos {
     display: grid;
     grid-template-columns: repeat(3, 1fr);

@@ -1,0 +1,51 @@
+.search__header {
+    margin-bottom: 30px;
+    // color: #6ad374;
+    font-size: 35px;
+    font-weight: bold;
+}
+.search__videos {
+    .search__videos_result {
+        margin-bottom: 15px;
+    }
+}
+
+.search_type {
+    color: #6ad374;
+    margin-bottom: 20px;
+    font-size: 35px;
+    font-weight: bold;
+    margin-top: 40px;
+}
+.search_photoBlock  {
+    background: #fff;
+      padding: 1rem;
+      box-shadow: 0 0.25rem 1rem rgba(0,0,0,0.2);
+    height: 450px;
+    max-width: 400px;
+    text-align: center;
+  
+    .search_photoBlock__thumbnail{
+      max-width: 100%;
+      max-height: 380px;
+      height: auto;
+    }  
+  
+    video {
+      margin-bottom: 10px;
+      max-width: 100%;
+    }
+    .search_photoBlock__title {
+      font-size: 18px;
+      font-weight: 600;
+      color: $fontBColor;
+      margin-top: 5px;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+    .search_photoBlock__views {
+      color: $fontSColor;
+      font-weight: bold;
+    }
+  }
+  
