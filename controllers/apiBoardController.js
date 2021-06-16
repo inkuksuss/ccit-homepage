@@ -281,10 +281,25 @@ export const postDeletePhotoComment = async (req, res) => {
 // Video
 export const apiVideos = async(req, res) => {
     try{
-        const videoList = await Video.find({}).sort({ _id: -1 });
+        const videoInfo = await Video.find({}).sort({ _id: -1 });
+        const videoId = [];
+        const videoList = [];
+        let bitmap;
+        let buff;
+
+        for(const info of videoInfo) {
+            videoId.push(info.videoUrl);
+        }
+        for(const id of videoId) {
+            bitmap = fs.readFileSync(`./${id}`);
+            buff = Buffer.from(bitmap);
+            videoList.push(buff.toString('base64'));
+        }
         res.json({
-            data: videoList
-        })
+            success: true,
+            videoInfo,
+            videoList
+        });
     } catch(err) {
         res.json({
             data: {}
