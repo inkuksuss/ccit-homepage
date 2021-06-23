@@ -5,6 +5,7 @@ import Video from "../models/Video";
 import Photo from "../models/Photo";
 import User from "../models/User"
 import Complain from "../models/Complain";
+import PhotoComplain from "../models/PhotoComplain";
 import Comment from "../models/Comment";
 import { clearComment, clearUserComment } from './boardController';
 
@@ -469,7 +470,7 @@ export const postVideoComplain = async (req, res) => {
     } = req;
     try {
         const user = await User.findById(id)
-        const already = user.complain.filter(list => String(list) === String(videoId));
+        const already = user.videoComplain.filter(list => String(list) === String(videoId));
         console.log(already)
         if(already.length === 0) {
             res.json({
@@ -506,8 +507,9 @@ export const postVideoComplainPopup = async(req, res) => {
                     complainer: userId,
                     complainedVideo: id
                 });
-                await Video.findByIdAndUpdate(id, {$push: { complain: userId }});
-                await User.findByIdAndUpdate(userId, {$push: { complain: id }});
+                const videoComplain = await Complain.findOne({ complainedVideo: id })
+                await Video.findByIdAndUpdate(id, {$push: { complain: videoComplain.id }});
+                await User.findByIdAndUpdate(userId, {$push: { videoComplain: id }});
                 return res.send("신고가 완료되었습니다");
             } else {
                 return res.send("이미 신고된 게시물입니다.");
@@ -525,7 +527,8 @@ export const postPhotoComplain = async (req, res) => {
     } = req;
     try {
         const user = await User.findById(id)
-        const already = user.complain.filter(list => String(list) === String(photosId));
+        console.log(user)
+        const already = user.photoComplain.filter(list => String(list) === String(photosId));
         if(already.length === 0) {
             res.json({
                 success: true,
@@ -555,14 +558,15 @@ export const postPhotoComplainPopup = async(req, res) => {
         if(user && photo) {
             const exist = photo.complain.filter(list => String(list) === String(userId));
             if(exist.length === 0){
-                await Complain.create({
+                await PhotoComplain.create({
                     title,
                     description,
                     complainer: userId,
                     complainedPhoto: id
                 });
-                await Photo.findByIdAndUpdate(id, {$push: { complain: userId }});
-                await User.findByIdAndUpdate(userId, {$push: { complain: id }});
+                const photoComplain = await PhotoComplain.findOne({ complainedPhoto: id })
+                await Photo.findByIdAndUpdate(id, {$push: { complain: photoComplain.id }});
+                await User.findByIdAndUpdate(userId, {$push: { photoComplain: id }});
                 return res.send("신고가 완료되었습니다");
             } else {
                 return res.send("이미 신고된 게시물입니다.");

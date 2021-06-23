@@ -8,8 +8,8 @@ import "./deviceList";
 import "./remote";
 import "./productPage";
 import "./chart";
+import "./admin";
 import "./imgslides";
-
 // import pymongo
 // import pandas as pd
 // import json

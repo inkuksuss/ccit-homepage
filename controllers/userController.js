@@ -53,7 +53,7 @@ export const postJoin = async (req, res, next) => { // 회원가입 기능을 �
             console.log(err); // 에러가 발생한다면 홈으로 이동
             res.redirect(routes.home);
         }
-    }
+    } 
 };
 
 export const getLogin = (req, res) => // get 방식 요청이오면 login 페이지 랜더링

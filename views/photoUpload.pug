@@ -1,7 +1,7 @@
 extends layouts/main
 
 block content
-    form(action=`/boards${routes.photoUpload}`, method="post", enctype="multipart/form-data")
+    form.asdasdass(action=`/boards${routes.photoUpload}`, method="post", enctype="multipart/form-data")
         label(for="file") 사진 파일
         input(type="file", id="file", name="photoFile", required=true, accept="image/*")
         input(type="text", placeholder="제목", name="title")

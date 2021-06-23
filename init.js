@@ -43,12 +43,11 @@ const options = {
 const client = mqtt.connect("mqtt://114.71.241.151", options);
 
 client.on("connect", () => {
-    console.log("😇Mqtt Connect");
+    // console.log("😇Mqtt Connect");
     client.subscribe('jb/ccit/dogbab/smit/petoy/+/cb');
     client.subscribe('jb/ccit/dogbab/smit/petoy/+/+/output/stepmt/+/cb'); 
     // client.subscribe('jb/ccit/dogbab/smit/petoy/+/+/output/stepmt/+/cb'); 
     client.subscribe('jb/ccit/dogbab/smit/petoy/+/+/input/+'); 
-    client.subscribe('abc'); 
 });
 
 
@@ -132,9 +131,9 @@ const io = socketIO(server);
 
 io.on("connection", socket => {
     console.log("😘Socket Connect")
-    console.log(socket.id)
+    // console.log(socket.id)
     console.log(socket.connected);
-    console.log(socket.disconnected)
+    // console.log(socket.disconnected)
     // 채팅  
     socket.on("newMessage", ({ message }) => {  
         socket.broadcast.emit("messageNotif", {
@@ -152,6 +151,7 @@ io.on("connection", socket => {
         const authTopic = `jb/ccit/dogbab/smit/petoy/${key.key}`
         console.log(jsonKey)
         client.publish(authTopic, jsonKey, err => {
+            console.log(authTopic)
             if(err) {
                 return console.log(err);
             }
@@ -188,8 +188,10 @@ io.on("connection", socket => {
             order: 3,
             userId
         }
+        console.log(sending)
         const jsSending = JSON.stringify(sending);
             client.publish(`jb/ccit/dogbab/smit/petoy/${userId}/${keyName}/output/stepmt/ad`, jsSending, async(err) => {
+                console.log(`jb/ccit/dogbab/smit/petoy/${userId}/${keyName}/output/stepmt/ad`)
                 if(err) {
                     return console.log(err);
                 }

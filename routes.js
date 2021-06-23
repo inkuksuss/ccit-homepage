@@ -77,6 +77,10 @@ const VIDEO_COMPLAIN_POPUP =  '/video/:id/complain/popup';
 const PHOTO_COMPLAIN =  '/photo/:id/complain';
 const PHOTO_COMPLAIN_POPUP =  '/photo/:id/complain/popup';
 
+//admin
+const ADMIN_DELETE_VIDEO = '/admin/video/delete/:id';
+const ADMIN_DELETE_PHOTO = '/admin/photo/delete/:id';
+
 
 const routes = {
     //Global
@@ -301,6 +305,21 @@ const routes = {
         return `/api/users/product/${id}`;
       } else {
         return PRODUCT_DETAIL;
+      }
+    },
+    //admin
+    adminDeleteVideo: id => {
+      if(id) {
+        return `/admin/video/delete/${id}`;
+      } else {
+        return ADMIN_DELETE_VIDEO;
+      }
+    },
+    adminDeletePhoto: id => {
+      if(id) {
+        return `/admin/photo/delete/${id}`;
+      } else {
+        return ADMIN_DELETE_PHOTO;
       }
     },
 };

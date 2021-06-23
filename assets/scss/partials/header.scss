@@ -19,7 +19,7 @@
     grid-template-columns: repeat(3, 1fr);
     align-items: center;
     .header__column {
-      .home_warp{
+      .home_warp {
         position: absolute;
         left: 45.5%;
       }
@@ -44,7 +44,7 @@
         justify-content: center;
         li:not(:last-child) {
           margin-right: 15px;
-          a{
+          a {
             color: white;
           }
         }

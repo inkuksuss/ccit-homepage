@@ -19,48 +19,58 @@ block content
             .video__author
                 |Uploaded by 
                 a(href=routes.userDetail(video.creator.id))=video.creator.name
-            if loggedUser && loggedUser.id !== video.creator.id
+            if loggedUser && loggedUser.id !== video.creator.id && !admin
                 button#jsVideoComplain(type="submit")
                 br
                 p.complain_p 게시글 신고하기
                 br
-        .video__comments
-            form.add__comment#jsAddVideoComment
-                input(type="text", placeholder="댓글...")
-            if video.comments.length === 1
-                span.video__comment-number
-                    span#jsCommentVideoNumber 1
-                    |  댓글
-            else  
-                span.video__comment-number
-                    span#jsCommentVideoNumber=video.comments.length
-                    |  댓글
+        if !admin
+            .video__comments
+                form.add__comment#jsAddVideoComment
+                    input(type="text", placeholder="댓글...")
+                if video.comments.length === 1
+                    span.video__comment-number
+                        span#jsCommentVideoNumber 1
+                        |  댓글
+                else  
+                    span.video__comment-number
+                        span#jsCommentVideoNumber=video.comments.length
+                        |  댓글
 
-            ul.video__comments-list#jsCommentVideoList
-                each comment in video.comments.reverse()
-                    li
-                        a(href=`${routes.userDetail(comment.creator)}`)=comment.displayName
-                        span=comment.text
-                        if (loggedUser)
-                            if (loggedUser.id === video.creator.id)
-                                form.jsDeleteVideoComment
-                                    input.jsDeleteVideoInput(type="hidden" value=comment.id)
-                                    button.jsDeleteVideoBtn(onclick="return confirm('정말로 삭제하시겠습니까?')")
-                                        i.fas.fa-trash-alt
-                            each loggedUserComment in loggedUser.comments
-                                if (comment.id === String(loggedUserComment) && loggedUser.id === video.creator.id)
-                                    form.jsUpdateVideoComment
-                                        input.jsUpdateVideoTarget(type="hidden" value=comment.id)
-                                        button.jsUpdateVideoBtn
-                                            i.fas.fa-user-edit
-                                        input.jsUpdateVideoInput(type="text" placeholder=`${comment.text}`)
-                                else if (comment.id === String(loggedUserComment) && loggedUser.id !== video.creator.id)
+                ul.video__comments-list#jsCommentVideoList
+                    each comment in video.comments.reverse()
+                        li
+                            a(href=`${routes.userDetail(comment.creator)}`)=comment.displayName
+                            span=comment.text
+                            if (loggedUser)
+                                if (loggedUser.id === video.creator.id)
                                     form.jsDeleteVideoComment
                                         input.jsDeleteVideoInput(type="hidden" value=comment.id)
                                         button.jsDeleteVideoBtn(onclick="return confirm('정말로 삭제하시겠습니까?')")
                                             i.fas.fa-trash-alt
-                                    form.jsUpdateVideoComment
-                                        input.jsUpdateVideoTarget(type="hidden" value=comment.id)
-                                        button.jsUpdateVideoBtn
-                                            i.fas.fa-user-edit
-                                        input.jsUpdateVideoInput(type="text" placeholder=`${comment.text}`)
+                                each loggedUserComment in loggedUser.comments
+                                    if (comment.id === String(loggedUserComment) && loggedUser.id === video.creator.id)
+                                        form.jsUpdateVideoComment
+                                            input.jsUpdateVideoTarget(type="hidden" value=comment.id)
+                                            button.jsUpdateVideoBtn
+                                                i.fas.fa-user-edit
+                                            input.jsUpdateVideoInput(type="text" placeholder=`${comment.text}`)
+                                    else if (comment.id === String(loggedUserComment) && loggedUser.id !== video.creator.id)
+                                        form.jsDeleteVideoComment
+                                            input.jsDeleteVideoInput(type="hidden" value=comment.id)
+                                            button.jsDeleteVideoBtn(onclick="return confirm('정말로 삭제하시겠습니까?')")
+                                                i.fas.fa-trash-alt
+                                        form.jsUpdateVideoComment
+                                            input.jsUpdateVideoTarget(type="hidden" value=comment.id)
+                                            button.jsUpdateVideoBtn
+                                                i.fas.fa-user-edit
+                                            input.jsUpdateVideoInput(type="text" placeholder=`${comment.text}`)
+        else
+            button#jsAdminVideoDelete(type="button") 삭제하기
+            ul.videoComplain__list
+                each complain in video.complain.reverse()
+                    li
+                        a(href=`${routes.userDetail(complain.complainer)}`)
+                            span=complain.title
+                            span=complain.description
+                            span=complain.createdAt

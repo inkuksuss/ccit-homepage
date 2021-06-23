@@ -5,6 +5,8 @@ import Video from "../models/Video";
 import Photo from "../models/Photo";
 import User from "../models/User"
 import Comment from "../models/Comment"
+import Complain from "../models/Complain";
+import PhotoComplain from "../models/PhotoComplain";
 
 export async function clearComment(comments) {
     for await (const comment of comments) {
@@ -20,8 +22,34 @@ export async function clearUserComment(comments) {
 
 
 // Global
-export const home = (req, res) => { // 홈페이지 랜더링
-        res.render("home", { pageTitle: "Home" })
+export const home = async(req, res) => { // 홈페이지 랜더링
+    const { 
+        user: { admin }
+    } = req;
+    try {
+        if(admin) {
+            const videoComplains = await Video.find({}).populate("complain");
+            const photoComplains = await Photo.find({}).populate("complain");
+            const videoComplain = [];
+            const photoComplain = [];
+            for(const vComplain of videoComplains) {
+                if(vComplain.complain.length > 0) {
+                    videoComplain.push(vComplain);
+                }
+            }
+            for(const pComplain of photoComplains) {
+                if(pComplain.complain.length > 0) {
+                    photoComplain.push(pComplain);
+                }
+            }
+            return res.render("admin", { pageTitle: "admin", videoComplain, photoComplain })
+            
+        } else {
+            return res.render("home", { pageTitle: "Home" })
+        }
+    } catch {
+        throw Error();
+    }
 }; 
 
 export const search = async(req, res) => { 
@@ -310,14 +338,16 @@ export const postVideoUpload = async (req, res) => {
 
 export const getVideoDetail = async(req, res) => {
     const { 
-        params: { id }
+        params: { id },
+        user: { admin }
     } = req;
     try {
         const video = await Video
             .findById(id)
             .populate("creator")
-            .populate("comments");
-        res.render("videoDetail", { pageTitle: video.title, video });
+            .populate("comments")
+            .populate("complain");
+        res.render("videoDetail", { pageTitle: video.title, video, admin });
     } catch(err) {
         console.log(err);
         res.redirect(routes.home);

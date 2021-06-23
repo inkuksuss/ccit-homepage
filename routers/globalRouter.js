@@ -1,4 +1,5 @@
 import express from "express";
+import { postDeleteVideo, postDeletePhoto } from '../controllers/adminController';
 import { home, search } from '../controllers/boardController';
 import { getJoin, postJoin, logout, getLogin, postLogin, getMe } from '../controllers/userController';
 import { onlyPrivate, onlyPublic } from '../middleware';
@@ -25,5 +26,8 @@ globalRouter
 globalRouter.get(routes.me, getMe);
 
 globalRouter.get(routes.search, search);
+
+globalRouter.post(routes.adminDeleteVideo(), postDeleteVideo);
+globalRouter.post(routes.adminDeletePhoto(), postDeletePhoto);
 
 export default globalRouter;

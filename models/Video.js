@@ -31,7 +31,7 @@ const VideoSchema = new mongoose.Schema({
     complain: [
         {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "User"
+            ref: "Complain"
         }
     ]
 });

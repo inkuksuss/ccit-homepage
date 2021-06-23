@@ -40,13 +40,24 @@ const UserSchema = new mongoose.Schema({
             ref: 'Product'
         }
     ],
-    complain: [
+    videoComplain: [
         {
             default: [],
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Video'
         }
-    ]
+    ],
+    photoComplain: [
+        {
+            default: [],
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Photo'
+        }
+    ],
+    admin: {
+        default: false,
+        type: Boolean
+    }
 }, { 
     versionKey: false
 });
